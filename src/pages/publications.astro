@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PubItem from '../components/PubItem.astro';
 import CopyBibtex from '../components/CopyBibtex.astro';
-import { publications, PUB_TYPES, profile } from '../lib/data';
+import { quartileYear, publications, PUB_TYPES, profile } from '../lib/data';
 
 const years = [...new Set(publications.map((p) => p.year))].sort((a, b) => b - a);
 const typeCounts = Object.keys(PUB_TYPES)
@@ -14,7 +14,7 @@ const typeCounts = Object.keys(PUB_TYPES)
     <p class="eyebrow">Publications</p>
     <h1>Publications</h1>
     <p>
-      {publications.length} items, newest first. My name is in bold. Unless marked with †, authors are listed in alphabetical order, following the convention of the operations research community. Filter by type or year, or search by title, author or venue.
+      {publications.length} items, newest first. My name is in bold. Unless marked with †, authors are listed in alphabetical order, following the convention of the operations research community. Q1–Q4 next to a journal is its best quartile in the <a href="https://www.scimagojr.com" rel="noopener">SCImago Journal Rank</a> ({quartileYear}). Filter by type or year, or search by title, author or venue.
       {profile.links.scholar && <> See also <a href={profile.links.scholar} rel="noopener">Google Scholar</a>{profile.links.scopus && <> and <a href={profile.links.scopus} rel="noopener">Scopus</a></>}.</>}
     </p>
   </header>

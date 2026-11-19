@@ -12,9 +12,28 @@ import teachingSrc from '../data/teaching.yaml?raw';
 import newsSrc from '../data/news.yaml?raw';
 import bibSrc from '../data/publications.bib?raw';
 import metricsData from '../data/metrics.json';
+import quartilesSrc from '../data/quartiles.yaml?raw';
 
 function readYaml<T>(src: string): T {
   return yaml.load(src) as T;
+}
+
+// ------------------------------------------------------------------ journal quartiles (SCImago)
+interface QuartileFile {
+  year: number;
+  journals: { name: string; quartile: string; url?: string; aliases?: string[] }[];
+}
+const quartiles = readYaml<QuartileFile>(quartilesSrc);
+const normJournal = (s: string) =>
+  s.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
+const quartileMap = new Map<string, { q: string; url: string }>();
+for (const j of quartiles?.journals ?? []) {
+  for (const n of [j.name, ...(j.aliases ?? [])]) quartileMap.set(normJournal(n), { q: j.quartile, url: j.url ?? '' });
+}
+export const quartileYear = quartiles?.year ?? 0;
+function quartileFor(journal: string) {
+  const hit = quartileMap.get(normJournal(journal));
+  return hit ? { q: hit.q, year: quartileYear, url: hit.url } : null;
 }
 
 // ---------------------------------------------------------------- types
@@ -128,6 +147,7 @@ export interface Publication {
   year: number;
   selected: boolean;
   award: string;
+  quartile: { q: string; year: number; url: string } | null;
   nonAlpha: boolean;
   note: string;
   links: Link[];
@@ -222,6 +242,7 @@ function toPublication(e: ReturnType<typeof parseBibtex>[number]): Publication {
     year: parseInt(f.year, 10) || 0,
     selected: (f.selected || '').toLowerCase() === 'true',
     award: cleanLatex(f.award || ''),
+    quartile: f.pubtype === 'journal' ? quartileFor(cleanLatex(f.journal || '')) : null,
     nonAlpha: (f.nonalpha || '').toLowerCase() === 'true',
     note: cleanLatex(f.note || ''),
     links,

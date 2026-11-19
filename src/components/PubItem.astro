@@ -14,6 +14,15 @@ const underReview = pub.type === 'submitted';
 <li class="pub" id={pub.key} data-type={pub.type} data-year={pub.year} data-search={searchText}>
   <div class="pub-meta">
     {pub.abbr && <span class="badge">{pub.abbr}</span>}
+    {pub.quartile && (
+      <a
+        class={`badge quartile ${pub.quartile.q.toLowerCase()}`}
+        href={pub.quartile.url || 'https://www.scimagojr.com'}
+        rel="noopener"
+        title={`SCImago Journal Rank ${pub.quartile.year}: best quartile ${pub.quartile.q}`}
+        aria-label={`SCImago Journal Rank ${pub.quartile.year}: ${pub.quartile.q}`}
+      >{pub.quartile.q}<span class="q-src">SJR</span></a>
+    )}
     <span class="badge neutral">{typeLabel}</span>
   </div>
   <div>

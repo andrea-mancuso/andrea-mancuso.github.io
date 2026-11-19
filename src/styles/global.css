@@ -1472,3 +1472,36 @@ a.card:hover h3 {
     --loop: 2.6rem;
   }
 }
+
+/* ------------------------------------------------------------------ journal quartile badge (SCImago) */
+.badge.quartile {
+  text-decoration: none;
+  font-weight: 600;
+  gap: 0.3em;
+  border: 1px solid transparent;
+}
+.badge.quartile .q-src {
+  margin-left: 0.4em;
+  font-weight: 400;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+.badge.quartile.q1 {
+  background: var(--drone-soft);
+  color: var(--drone);
+  border-color: color-mix(in srgb, var(--drone) 35%, transparent);
+}
+.badge.quartile.q2 {
+  background: var(--warm-soft);
+  color: var(--warm);
+  border-color: color-mix(in srgb, var(--warm) 35%, transparent);
+}
+.badge.quartile.q3,
+.badge.quartile.q4 {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border-color: var(--rule-strong);
+}
+.badge.quartile:hover {
+  border-color: currentColor;
+}

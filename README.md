@@ -13,6 +13,7 @@ non serve toccare il codice.
 |---|---|
 | Nome, ruoli, bio breve e lunga, link (email, Scholar, Scopus, ORCID), numeri in home, percorso di carriera, collaborazioni, lingue | `src/data/profile.yaml` |
 | Pubblicazioni (anche quelle in revisione) | `src/data/publications.bib` |
+| Quartili delle riviste (SCImago) | `src/data/quartiles.yaml` |
 | News | `src/data/news.yaml` |
 | Linee di ricerca (testi, illustrazioni, paper collegati) | `src/data/research.yaml` |
 | Progetti e collaborazioni | `src/data/projects.yaml` |
@@ -36,6 +37,13 @@ Apri `publications.bib`, copia una voce esistente e modificala. Oltre ai campi B
 Il tuo nome viene messo in grassetto automaticamente. Questi campi extra vengono tolti dal BibTeX mostrato ai visitatori.
 Quando un lavoro in revisione viene accettato, cambia `@unpublished` in `@article`, `pubtype` in `journal`
 e aggiungi `volume`, `pages`, `doi`.
+
+### Quartili delle riviste
+Accanto a ogni articolo su rivista compare il miglior quartile della rivista secondo lo
+[SCImago Journal Rank](https://www.scimagojr.com) (Q1 verde, Q2 arancione), con il link alla pagina SCImago.
+I valori sono in `src/data/quartiles.yaml`: SCImago li aggiorna una volta l'anno, di solito in primavera.
+Quando succede, cambia `year` e i quartili. Se pubblichi su una rivista nuova, aggiungila alla lista
+(nome della rivista come nel `.bib`, quartile e link): il badge compare da solo.
 
 ### Aggiungere una news
 In `news.yaml` aggiungi in qualunque punto:

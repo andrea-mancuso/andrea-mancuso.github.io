@@ -1,0 +1,32 @@
+# ------------------------------------------------------------------
+# Journal quartiles shown as a badge next to each journal article.
+# Source: SCImago Journal Rank (https://www.scimagojr.com), "best quartile" of the journal
+# across its subject categories. SCImago publishes new values once a year (usually in spring):
+# update `year` and the quartiles then. Journals are matched by name (case, "&"/"and" and
+# punctuation are ignored); add `aliases` if a journal appears with another name.
+# Journals not listed here simply show no badge.
+# ------------------------------------------------------------------
+
+year: 2025
+journals:
+  - name: "Computers & Operations Research"
+    quartile: Q1
+    url: https://www.scimagojr.com/journalsearch.php?q=24355&tip=sid
+  - name: "Transportation Research Part C: Emerging Technologies"
+    quartile: Q1
+    url: https://www.scimagojr.com/journalsearch.php?q=20893&tip=sid
+  - name: "Transportation Research Part E: Logistics and Transportation Review"
+    quartile: Q1
+    url: https://www.scimagojr.com/journalsearch.php?q=20909&tip=sid
+  - name: "Transportation Research Interdisciplinary Perspectives"
+    quartile: Q1
+    url: https://www.scimagojr.com/journalsearch.php?q=21100943534&tip=sid
+  - name: "Expert Systems with Applications"
+    quartile: Q1
+    url: https://www.scimagojr.com/journalsearch.php?q=24201&tip=sid
+  - name: "Soft Computing"
+    quartile: Q2
+    url: https://www.scimagojr.com/journalsearch.php?q=28554&tip=sid
+  - name: "Networks"
+    quartile: Q2
+    url: https://www.scimagojr.com/journalsearch.php?q=28535&tip=sid
