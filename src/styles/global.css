@@ -835,6 +835,13 @@ a.card:hover h3 {
   align-items: flex-start;
   gap: 0.35rem;
   padding-top: 0.2rem;
+  min-width: 0;
+}
+/* A long venue label wraps inside its column instead of running into the title. */
+.pub-meta .badge {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .pub-title {
   font-family: var(--font-serif);
