@@ -15,7 +15,7 @@ non serve toccare il codice.
 | Pubblicazioni (anche quelle in revisione) | `src/data/publications.bib` |
 | Quartili delle riviste (SCImago) | `src/data/quartiles.yaml` |
 | News | `src/data/news.yaml` |
-| Linee di ricerca (testi, illustrazioni, paper collegati) | `src/data/research.yaml` |
+| Linee di ricerca (testi, parole chiave, paper collegati) | `src/data/research.yaml` |
 | Progetti e collaborazioni | `src/data/projects.yaml` |
 | Service (EUROYoung/AIROYoung, comitati, panel, revisioni, premi, seminari, talk) | `src/data/service.yaml` |
 | Corsi, tesi seguite, proposte di tesi | `src/data/teaching.yaml` |
@@ -73,10 +73,6 @@ Rileggile e metti `draft: false` per pubblicarle.
 - **Foto**: `public/images/profile.jpg` (quadrata, circa 600×600 px). Se manca, compaiono le iniziali.
 - **CV in PDF**: al momento il sito non lo mostra. Per rimettere il pulsante "CV (PDF)" copia il file in
   `public/cv/` e scrivi il percorso in `cv_pdf` dentro `profile.yaml` (es. `cv/Andrea_Mancuso_CV.pdf`).
-- **Figure di ricerca**: di default ogni linea di ricerca usa un'illustrazione schematica integrata
-  (`figure: drones | health | cover | bnc` in `research.yaml`). Per usare una tua figura mettila in
-  `public/images/research/` e scrivi il percorso nel campo `image` (es. `images/research/fstsp.png`), con una
-  descrizione in `image_alt`.
 - **Animazione in home**: è in `src/components/HeroCanvas.astro` (tour del camion con TSP nearest neighbour + 2-opt,
   sortite del drone, facility che copre la domanda attorno al cursore). Con "riduci movimento" attivo nel sistema
   operativo viene mostrato un solo fotogramma fisso.
@@ -153,7 +149,7 @@ e apri http://localhost:4321. Con `npm run build` generi la versione finale nell
 src/
   data/        contenuti modificabili (YAML + BibTeX)
   lib/         lettura dei dati e parser BibTeX
-  components/  pezzi riutilizzabili (pubblicazione, news, icone, animazione, figure di ricerca)
+  components/  pezzi riutilizzabili (pubblicazione, news, icone, animazione)
   layouts/     struttura comune delle pagine (header, footer, SEO)
   pages/       una pagina per sezione
   styles/      colori, caratteri e layout (palette blu notte / ambra / verde acqua, tema chiaro e scuro)

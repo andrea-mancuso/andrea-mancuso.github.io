@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import ResearchFigure from '../components/ResearchFigure.astro';
 import { research, pubByKey, url, profile } from '../lib/data';
 ---
 <Base title="Research" description={`Research lines of ${profile.name}: truck-and-drone routing, healthcare optimisation, covering and location problems, and exact methods combined with machine learning.`}>
@@ -12,49 +11,50 @@ import { research, pubByKey, url, profile } from '../lib/data';
       in which room and when, where to place a service) and design algorithms that solve them to
       proven optimality, or close to it, fast enough to be used in practice.
     </p>
+    <ol class="research-toc" aria-label="Research lines">
+      {research.map((r, i) => (
+        <li><a href={`#${r.id}`}><span>{String(i + 1).padStart(2, '0')}</span>{r.title}</a></li>
+      ))}
+    </ol>
   </header>
 
   {research.map((r, i) => (
     <section class="research-line" id={r.id} aria-labelledby={`h-${r.id}`}>
-      <div>
-        <p class="eyebrow">{String(i + 1).padStart(2, '0')}</p>
+      <div class="topic-head">
+        <p class="topic-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
         <h2 id={`h-${r.id}`}>{r.title}</h2>
-        <p style="font-size:1.08rem">{r.description}</p>
+        <p class="topic-short">{r.short}</p>
+      </div>
+      <div class="topic-body">
+        <p class="topic-text">{r.description}</p>
         <ul class="keywords" aria-label="Keywords">
           {r.keywords.map((k) => <li class="badge neutral">{k}</li>)}
         </ul>
-        <div class="related">
-          {r.papers?.length > 0 && (
-            <>
-              <h3>Key papers</h3>
-              <ul>
-                {r.papers.map((k) => pubByKey.get(k)).filter(Boolean).map((p) => (
-                  <li>
-                    <a href={url(`publications/#${p!.key}`)}>{p!.title}</a>
-                    <span class="muted"> · {p!.abbr || p!.venue} {p!.year}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          {r.code && r.code.length > 0 && (
-            <>
-              <h3>Code</h3>
-              <div class="pub-links">
-                {r.code.map((c) => <a href={c.url} rel="noopener">{c.label}</a>)}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-      <figure class="research-figure">
-        {r.image ? (
-          <img src={url(r.image)} alt={r.image_alt} loading="lazy" />
-        ) : (
-          <ResearchFigure kind={r.figure} alt={r.image_alt} />
+        {r.papers?.length > 0 && (
+          <div class="related">
+            <h3>Key papers</h3>
+            <ul class="topic-papers">
+              {r.papers.map((k) => pubByKey.get(k)).filter(Boolean).map((p) => (
+                <li>
+                  <a href={url(`publications/#${p!.key}`)}>{p!.title}</a>
+                  <span class="topic-paper-meta">
+                    {p!.abbr || p!.venue} · {p!.type === 'submitted' ? 'under review' : p!.year}
+                    {p!.quartile && <span class={`badge quartile ${p!.quartile.q.toLowerCase()}`}>{p!.quartile.q}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
-        {!r.image && <figcaption>Schematic illustration, not real data.</figcaption>}
-      </figure>
+        {r.code && r.code.length > 0 && (
+          <div class="related">
+            <h3>Code</h3>
+            <div class="pub-links">
+              {r.code.map((c) => <a href={c.url} rel="noopener">{c.label}</a>)}
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   ))}
 </Base>

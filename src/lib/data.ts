@@ -89,9 +89,6 @@ export interface ResearchLine {
   short: string;
   description: string;
   keywords: string[];
-  figure: string;
-  image: string;
-  image_alt: string;
   papers: string[];
   code?: Link[];
 }

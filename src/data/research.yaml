@@ -1,10 +1,7 @@
 # ------------------------------------------------------------------
-# Research lines shown on /research (and summarised on the home page).
-#   image: path inside /public (e.g. images/research/fstsp.png).
-#          If empty, a built-in illustration is used
-#          (figure: drones | health | cover | bnc).
-#   image_alt: description of the image for screen readers (always fill it in).
-#   papers: BibTeX keys from publications.bib, listed under the line.
+# Research lines shown on /research (and summarised on the home page), in this order.
+#   title, short (one line), description (a paragraph), keywords (shown as chips)
+#   papers: BibTeX keys from publications.bib, listed as "Key papers" under the line.
 #   code: optional list of {label, url}.
 # ------------------------------------------------------------------
 
@@ -21,9 +18,6 @@
     technology-driven logistics: AGV scheduling with battery constraints, container drayage
     with truck platooning, and incentives for a modal shift in freight transport.
   keywords: [flying sidekick TSP, truck-and-drone routing, synchronisation, branch-and-cut, matheuristics, sustainable logistics]
-  figure: drones
-  image: ""
-  image_alt: Schematic of a truck tour through a set of customers, with a drone leaving the truck to serve some customers and landing on it further along the route.
   papers: [boccia2023fstsp, boccia2024tdtlp, boccia2021twoechelon, amitrano2025drayage, boccia2024agv, simonelli2024freight]
 
 - id: healthcare
@@ -37,9 +31,6 @@
     how a region should organise its blood supply chain, with multi-echelon facility location
     models that balance cost, accessibility and self-sufficiency under uncertainty.
   keywords: [operating room planning and scheduling, re-scheduling, emergency surgery, blood supply chain, multi-echelon facility location]
-  figure: health
-  image: ""
-  image_alt: Gantt chart of four operating rooms over a day, with elective surgeries and an emergency case inserted by re-scheduling.
   papers: [boccia2026online, boccia2024integrated, diglio2024blood, boccia2023surgery, diglio2021blood, mancuso2024phd]
 
 - id: covering
@@ -54,9 +45,6 @@
     ideas guide the design of 15-minute cities, where essential services should be reachable
     on foot or by bike, a theme I explore with my thesis students.
   keywords: [covering tour problem, network upgrading, set covering location, facility location, 15-minute city]
-  figure: cover
-  image: ""
-  image_alt: Map of demand points covered by circles around open facilities, linked by a tour; one upgraded road extends the coverage to a previously unreachable point.
   papers: [baldomero2026covering, mancuso2026clustered, baldomero2025arc, amitrano2026classification]
 
 - id: methods
@@ -71,7 +59,4 @@
     solver, and interpretable machine learning (SHAP) to find behavioural patterns in data, such
     as vehicle emissions.
   keywords: [mixed-integer linear programming, valid inequalities, branch-and-cut, matheuristics, ML for combinatorial optimisation, interpretable ML]
-  figure: bnc
-  image: ""
-  image_alt: A linear-programming polytope with integer points, a cutting plane that removes a fractional vertex, and a small branch-and-bound tree.
   papers: [boccia2024features, amitrano2025classification, boccia2021feature, iodicedenza2026shap]
