@@ -1,0 +1,113 @@
+# ------------------------------------------------------------------
+# Service & activities shown on /service.
+# Each group has a title and a list of items:
+#   what: main text (Markdown-style links allowed: [label](url), *italic*)
+#   when: free text (year or range)
+#   detail: optional, shown in grey
+# Remove a group or leave items: [] to hide it.
+# ------------------------------------------------------------------
+
+- group: Leadership
+  items:
+    - what: Coordinator, [EUROYoung](https://euroyoung.eu/), the early-career forum of the Association of European Operational Research Societies (EURO)
+      when: 2024 – present
+      detail: Leading an international network of early-career OR researchers and coordinating Europe-wide scientific events
+    - what: Coordinator, AIROYoung, the young researchers' section of the Italian Operational Research Society (AIRO)
+      when: 2024 – present
+      detail: Coordinating national activities for early-career researchers
+
+- group: Conference organisation
+  items:
+    - what: Chair of the Organising and Scientific Committees, 5th EUROYoung Workshop, Naples, Italy
+      when: "2025"
+    - what: Scientific Committee member, International Conference on Optimization and Decision Science (ODS 2025), Milan, Italy
+      when: "2025"
+    - what: Scientific Committee member, 9th AIROYoung Workshop, Pavia, Italy
+      when: "2025"
+
+- group: Panels organised
+  items:
+    - what: '*Challenges and Decisions that Shape Academic Careers in Operational Research*, 5th EUROYoung Workshop, Naples'
+      when: "2025"
+      detail: "Panelists: M. Boccia, D. Romero Morales, M. Schmidt, M. G. Speranza"
+    - what: '*Reviewing Papers and Responding to Reviewers*, ODS 2025, Milan'
+      when: "2025"
+      detail: "Panelists: A. Agnetis, C. Arbib, C. Archetti, A. Schaerf"
+    - what: '*Communicating Operations Research: Strategies for Engaging Stakeholders, Academics, and the Public*, EURO 2025, Leeds'
+      when: "2025"
+      detail: "Panelists: V. Guerrero, F. Saldanha-da-Gama, M. G. Speranza, A. Subramanian"
+
+- group: Editorial activity
+  items:
+    - what: Volume editor, *Shaping a Sustainable Future in the Era of Big Data* (proceedings of the 9th AIROYoung Workshop), Springer Nature
+      when: in preparation
+
+- group: Journal reviewing
+  items:
+    - what: '*European Journal of Operational Research*'
+    - what: '*Transportation Research Part C: Emerging Technologies*'
+    - what: '*Transportation Research Part E: Logistics and Transportation Review*'
+    - what: '*Computers & Operations Research*'
+    - what: '*Soft Computing*'
+
+- group: Honours and awards
+  items:
+    - what: '*Networks* Top 10 Most-Cited Paper and Top 10% Most-Viewed Paper of 2023, for *A new MILP formulation for the flying sidekick traveling salesman problem*'
+      when: "2023"
+    - what: 3rd place, Best Presentation Award, 5th AIROYoung Workshop & PhD School, Naples
+      when: "2021"
+
+- group: Invited seminars
+  items:
+    - what: '*The Clustered Multimode Set Covering Location Problem*, Doctoral Programme in Mathematics, University of Cádiz, Spain'
+      when: "2026"
+    - what: '*Optimizing operating room surgical scheduling*, workshop *Innovazione tecnologica e Intelligenza Artificiale*, A.O.R.N. "A. Cardarelli" hospital, Naples, Italy'
+      when: "2025"
+    - what: '*Truck-and-drone delivery systems for last-mile logistics*, Doctoral Programme in Mathematics, University of Cádiz, Spain'
+      when: "2024"
+
+- group: Conference talks
+  items:
+    - what: '*A new MILP formulation for the Multimode Set Covering Problem*, International Conference on Optimization and Decision Science (ODS), Galzignano Terme, Italy'
+      when: "2026"
+    - what: '*Identifying driving behaviour archetypes in vehicle emissions with SHAP explanations*, XLII National Conference on Statistics, Operations Research and Data Science, Santiago de Compostela, Spain'
+      when: "2026"
+    - what: '*An exact approach for the Multimode Set Covering Problem*, 5th EUROYoung Workshop, Naples, Italy'
+      when: "2025"
+    - what: '*The Clustered Multimode Set Covering Problem*, 34th European Conference on Operational Research (EURO), Leeds, UK'
+      when: "2025"
+    - what: '*The Covering Tour Problem with Path Upgrades*, 9th AIROYoung Workshop, Pavia, Italy'
+      when: "2025"
+    - what: '*The Covering Tour Problem with Arc Upgrades*, International Conference on Optimization and Decision Science (ODS), Badesi, Italy'
+      when: "2024"
+    - what: '*The Covering Tour Problem with Edge Upgrades*, The International Summer Conference 2024, Valencia, Spain'
+      when: "2024"
+    - what: '*The Covering Tour Problem with Arc Upgrades*, 8th AIROYoung Workshop, Rende, Italy'
+      when: "2024"
+    - what: '*An efficient approach for pancreas segmentation in computer tomography scans*, International Conference on Optimization and Decision Science (ODS), Ischia, Italy'
+      when: "2023"
+    - what: '*An online optimization-based tool for surgery scheduling and rescheduling*, 49th Meeting of the EURO Working Group on OR Applied to Health Services (ORAHS), Graz, Austria'
+      when: "2023"
+    - what: '*Optimizing multi-echelon facility location to enhance regional blood supply chain*, ISOLDE XVI, Kaiserslautern and Baden-Baden, Germany'
+      when: "2023"
+    - what: '*A two-phase optimization tool for efficient surgery scheduling*, 3rd EUROYoung Workshop, Paris, France'
+      when: "2023"
+    - what: '*An online optimization-based tool for surgery scheduling and re-scheduling*, 7th AIROYoung Workshop, Milan, Italy'
+      when: "2023"
+    - what: '*Iterative optimization for surgery department management*, International Conference on Optimization and Decision Science (ODS), Florence, Italy'
+      when: "2022"
+    - what: '*An iterative optimization approach for surgery department management*, 48th Meeting of the EURO Working Group on OR Applied to Health Services (ORAHS), Bergamo, Italy'
+      when: "2022"
+    - what: '*A multi-echelon facility location model for the reorganization of the blood supply chain at regional scale*, EURO Summer Institute on Location Science (ESI), Edinburgh, UK'
+      when: "2022"
+    - what: '*A unified modeling framework for the surgery department management problem*, 6th AIROYoung Workshop, Rome, Italy'
+      when: "2022"
+    - what: '*ILP formulation for surgery department management: a case study in a hospital in Naples*, International Conference on Optimization and Decision Science (ODS), Rome, Italy'
+      when: "2021"
+    - what: '*Surgery department operating room management: a case study in a small hospital in Naples*, 22nd Conference of the International Federation of Operational Research Societies (IFORS), Seoul, South Korea'
+      when: "2021"
+    - what: '*Optimization for surgery department management: an application to a hospital in Naples*, 31st European Conference on Operational Research (EURO), Athens, Greece'
+      when: "2021"
+    - what: '*A MILP formulation for reorganizing blood supply chain in Italy*, 5th AIROYoung Workshop, Naples, Italy'
+      when: "2021"
+      detail: 3rd place, Best Presentation Award

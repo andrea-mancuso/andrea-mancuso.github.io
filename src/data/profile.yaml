@@ -1,0 +1,166 @@
+# ------------------------------------------------------------------
+# Profile: name, role, bios and links shown on the home page,
+# in the footer and in the search-engine / social-media previews.
+# Leave a field or a link empty ("") to hide it.
+# ------------------------------------------------------------------
+
+name: Andrea Mancuso
+# Used to put your name in bold in author lists (matches "Mancuso" with first initial "A").
+author_match:
+  last: Mancuso
+  first_initial: A
+
+role: Postdoctoral Researcher
+# Optional second role, shown next to the main one on the home page and on the Contact page.
+secondary_role: Adjunct Professor
+department: Department of Political Science
+department_short: Dept. of Political Science
+university: University of Naples Federico II
+# Optional research group (name + link). Leave "" to hide.
+lab: ""
+lab_url: ""
+address:
+  - Via Leopoldo Rodinò 22
+  - 80138 Naples, Italy
+
+# International collaborations (shown on the Contact page).
+collaborations:
+  - name: University of Sheffield
+    unit: Sheffield University Management School, UK
+    people: Prof. Francisco Saldanha-da-Gama
+  - name: University of Cádiz
+    unit: Department of Statistics and Operations Research, Spain
+    people: Prof. Antonio Manuel Rodríguez-Chía, Prof. Marta Baldomero-Naranjo
+
+# One line shown under your name on the home page.
+tagline: Operations Research · Mixed-integer programming · Logistics · Healthcare
+
+# Path of your photo inside /public. If the file is missing, a monogram is shown.
+photo: images/profile.jpg
+photo_alt: Portrait of Andrea Mancuso
+
+# Google Search Console: the code from the "HTML tag" verification method, i.e. only the
+# value of content="..." in <meta name="google-site-verification" content="...">. Leave "" if unused.
+google_site_verification: ""
+
+# Short description used by search engines and social previews (max ~160 characters).
+seo_description: Andrea Mancuso, Operations Research postdoc at the University of Naples Federico II. Mixed-integer programming for logistics, healthcare and location.
+
+bio_short: >-
+  Andrea Mancuso is a postdoctoral researcher at the Department of Political Science of the
+  University of Naples Federico II, where he also teaches Optimization and Decision Making
+  for Management. He builds mixed-integer programming models, branch-and-cut algorithms and
+  matheuristics for truck-and-drone delivery, healthcare operations and covering location
+  problems, and combines them with machine learning.
+
+# Paragraphs of the long bio (one item = one paragraph). Plain text; *text* becomes italic.
+bio_long:
+  - >-
+    Andrea Mancuso is a postdoctoral researcher at the Department of Political Science of the
+    University of Naples Federico II, within the PNRR MUR project *Insurtech – Ecoscoring* led
+    by Prof. Francesco Palumbo, and an adjunct professor teaching *Optimization and Decision
+    Making for Management* in the MSc in Statistics for Decision Sciences. He received his BSc
+    and his MSc (110/110 cum laude) in Management Engineering from Federico II, with a master's
+    thesis on optimisation models for blood supply chain management, and in 2024 his PhD in
+    Information and Communication Technology for Health, with the thesis *Optimizing Healthcare
+    Logistics: Innovative Models, Methods, and Applications for Location, Scheduling, and
+    Routing*, supervised by Prof. Claudio Sterle. From 2023 to 2024 he was a postdoctoral
+    researcher on the PRIN 2022 project *ACHILLES* on eco-sustainable last-mile logistics.
+  - >-
+    His research is in Operations Research, centred on mixed-integer linear programming: new
+    formulations, valid inequalities and branch-and-cut algorithms, matheuristics, and machine
+    learning used inside combinatorial optimisation. The applications range from truck-and-drone
+    delivery systems for the last mile (his paper on the flying sidekick traveling salesman
+    problem was among the ten most-cited papers published in *Networks* in 2023) to the planning
+    and real-time re-scheduling of operating rooms, the design of regional blood supply chains,
+    and covering and facility location problems, including services for the 15-minute city.
+  - >-
+    He works with the University of Cádiz, where he was a visiting postdoctoral researcher in
+    2024 and an Erasmus+ visiting professor in 2026, and with the University of Sheffield. Since
+    2024 he has coordinated EUROYoung, the early-career forum of the Association of European
+    Operational Research Societies (EURO), and AIROYoung, the young researchers' section of the
+    Italian Operational Research Society (AIRO). In 2025 he chaired the 5th EUROYoung Workshop
+    in Naples and organised panels on academic careers, peer review and communicating
+    Operations Research. He reviews for journals including the *European Journal of
+    Operational Research* and *Transportation Research Part C*.
+
+# Key numbers shown under the hero on the home page.
+# value: a number, or
+#   auto:publications  -> counts the published papers in publications.bib
+#                         (no thesis, edited volumes or papers under review)
+#   auto:journal       -> counts the journal articles in publications.bib
+#   auto:h_index, auto:citations -> from src/data/metrics.json, updated weekly from OpenAlex
+#                         (hidden until the first update has run)
+# note: free text, or "auto" to show the source and month of the metrics.
+stats:
+  - value: auto:publications
+    label: publications
+  - value: auto:h_index
+    label: h-index
+    note: auto
+  - value: auto:citations
+    label: citations
+    note: auto
+  - value: "21"
+    label: conference talks
+    note: 2021 – 2026
+
+# Career and education, shown at the bottom of the home page as a route, from the first stop
+# to today. No dates: only what you did, in order.
+#   kind: education | position | visiting
+#         (visiting periods are drawn as dashed "drone sorties" that leave the route and come back)
+#   current: true  -> highlighted in amber as an ongoing role
+#   detail: optional; *text* becomes italic
+career:
+  - kind: education
+    what: BSc in Management Engineering
+    where: University of Naples Federico II
+  - kind: education
+    what: MSc in Management Engineering, 110/110 cum laude
+    where: University of Naples Federico II
+    detail: Thesis on optimisation models and methods for blood supply chain management
+  - kind: education
+    what: PhD in Information and Communication Technology for Health
+    where: University of Naples Federico II
+    detail: "Thesis: *Optimizing Healthcare Logistics: Innovative Models, Methods, and Applications for Location, Scheduling, and Routing*, supervised by Prof. C. Sterle"
+  - kind: position
+    what: Postdoctoral Researcher
+    where: University of Naples Federico II
+    detail: "PRIN 2022 project *ACHILLES* on eco-sustainable, technology-driven last-mile logistics (PI: Prof. C. Sterle)"
+  - kind: visiting
+    what: Visiting Postdoctoral Researcher
+    where: University of Cádiz, Spain
+  - kind: position
+    current: true
+    what: Postdoctoral Researcher
+    where: Department of Political Science, University of Naples Federico II
+    detail: "PNRR MUR project *Insurtech – Ecoscoring* (PI: Prof. F. Palumbo)"
+  - kind: position
+    current: true
+    what: Adjunct Professor
+    where: University of Naples Federico II
+    detail: Instructor of record for *Optimization and Decision Making for Management*, MSc in Statistics for Decision Sciences
+  - kind: visiting
+    what: Visiting Professor, Erasmus+ teaching mobility
+    where: University of Cádiz, Spain
+
+# Languages and software (shown on the Contact page).
+languages:
+  - Italian (native)
+  - English (fluent)
+  - Spanish (fluent)
+skills:
+  - Python, C++, Mosel
+  - Gurobi, CPLEX, Xpress
+
+# Quick links (home page and footer). Leave "" to hide.
+links:
+  email: andrea.mancuso@unina.it
+  scholar: https://scholar.google.com/citations?user=yb3uVecAAAAJ
+  scopus: https://www.scopus.com/authid/detail.uri?authorId=57275358900
+  orcid: https://orcid.org/0000-0001-5487-0181
+  github: ""         # e.g. https://github.com/your-handle
+  linkedin: ""       # e.g. https://www.linkedin.com/in/your-handle
+  dblp: ""
+  university_page: ""   # e.g. https://www.docenti.unina.it/andrea.mancuso
+  cv_pdf: ""   # e.g. cv/Andrea_Mancuso_CV.pdf (a file inside /public) to show a "CV (PDF)" button

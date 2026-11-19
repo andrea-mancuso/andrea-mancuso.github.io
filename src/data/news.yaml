@@ -1,0 +1,79 @@
+# ------------------------------------------------------------------
+# News: one item per entry, newest first is NOT required (the site sorts).
+#   date: YYYY-MM-DD, YYYY-MM or YYYY
+#   text: short sentence. Markdown-style links are supported: [label](https://...)
+#   tag (optional): paper | talk | event | teaching | career | award
+# The home page shows the 5 most recent items; /news shows all of them.
+# ------------------------------------------------------------------
+
+- date: 2026-09-07
+  tag: talk
+  text: Talk on a new MILP formulation for the Multimode Set Covering Problem at the International Conference on Optimization and Decision Science (ODS 2026), Galzignano Terme.
+
+- date: 2026-09-02
+  tag: talk
+  text: Talk on identifying driving-behaviour archetypes in vehicle emissions with SHAP explanations at the XLII National Conference on Statistics, Operations Research and Data Science, Santiago de Compostela.
+
+- date: 2026-04
+  tag: paper
+  text: '*The covering tour problem with path upgrades*, with M. Baldomero-Naranjo, A. Masone and A. M. Rodríguez-Chía, is out in *Computers & Operations Research* ([doi](https://doi.org/10.1016/j.cor.2026.107479)).'
+
+- date: 2026-02
+  tag: paper
+  text: '*An online ILP-based tool for surgery scheduling and re-scheduling* published open access in *Soft Computing* ([doi](https://doi.org/10.1007/s00500-025-10845-z)).'
+
+- date: 2026-01-05
+  tag: teaching
+  text: Erasmus+ teaching visit at the University of Cádiz (5 January – 6 March 2026), with 35 hours of teaching and an invited seminar on the Clustered Multimode Set Covering Location Problem for the Doctoral Programme in Mathematics.
+
+- date: 2025-10-15
+  tag: event
+  text: I chaired the 5th EUROYoung Workshop in Naples (15–17 October), including the panel *Challenges and Decisions that Shape Academic Careers in Operational Research* with M. Boccia, D. Romero Morales, M. Schmidt and M. G. Speranza.
+
+- date: 2025-10
+  tag: teaching
+  text: Short course *Mathematical Modeling for Decision Support* at the International School for Social and Business Studies in Celje, Slovenia.
+
+- date: 2025-09-01
+  tag: event
+  text: At ODS 2025 in Milan I organised the panel *Reviewing Papers and Responding to Reviewers*, with A. Agnetis, C. Arbib, C. Archetti and A. Schaerf, and served on the Scientific Committee.
+
+- date: 2025-06-22
+  tag: talk
+  text: At EURO 2025 in Leeds I presented the Clustered Multimode Set Covering Problem and organised the panel *Communicating Operations Research* with V. Guerrero, F. Saldanha-da-Gama, M. G. Speranza and A. Subramanian.
+
+- date: 2025-02-26
+  tag: talk
+  text: Talk on the Covering Tour Problem with Path Upgrades at the 9th AIROYoung Workshop in Pavia, where I also served on the Scientific Committee.
+
+- date: "2025"
+  tag: career
+  text: I joined the Department of Political Science of the University of Naples Federico II as a postdoctoral researcher on the PNRR project *Insurtech – Ecoscoring*, and started teaching *Optimization and Decision Making for Management*.
+
+- date: "2025"
+  tag: teaching
+  text: Two students I supervised, Giuseppe Cioffo and Erica Ferrone, graduated 110/110 cum laude with theses on optimisation for 15-minute city design.
+
+- date: 2024-06
+  tag: paper
+  text: '*Exact and heuristic approaches for the Truck–Drone Team Logistics Problem* published in *Transportation Research Part C* ([doi](https://doi.org/10.1016/j.trc.2024.104691)).'
+
+- date: 2024-04
+  tag: career
+  text: Visiting postdoctoral researcher at the University of Cádiz (April – June 2024), with an invited seminar on truck-and-drone delivery systems for the Doctoral Programme in Mathematics.
+
+- date: "2024"
+  tag: career
+  text: PhD in Information and Communication Technology for Health, with the thesis *Optimizing Healthcare Logistics* ([fedOA](https://www.fedoa.unina.it/15620/)).
+
+- date: "2024"
+  tag: event
+  text: I became coordinator of EUROYoung, the early-career forum of EURO, and of AIROYoung, the young researchers' section of AIRO.
+
+- date: "2023"
+  tag: award
+  text: Our paper *A new MILP formulation for the flying sidekick traveling salesman problem* was among the Top 10 most-cited and Top 10% most-viewed papers of 2023 in *Networks*.
+
+- date: 2021-02-10
+  tag: award
+  text: 3rd place, Best Presentation Award at the 5th AIROYoung Workshop & PhD School in Naples, for a talk on reorganising the blood supply chain in Italy.

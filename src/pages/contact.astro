@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import QuickLinks from '../components/QuickLinks.astro';
+import { profile } from '../lib/data';
+---
+<Base title="Contact" description={`How to contact ${profile.name}, ${profile.department}, ${profile.university}.`}>
+  <header class="page-head">
+    <p class="eyebrow">Contact</p>
+    <h1>Get in touch</h1>
+    <p>For collaborations, thesis projects or questions about my work, email is the best way to reach me.</p>
+  </header>
+
+  <p class="big-email"><a href={`mailto:${profile.links.email}`}>{profile.links.email}</a></p>
+
+  <dl class="contact-grid section" style="margin-top:2rem">
+    <div class="card">
+      <dt>Affiliation</dt>
+      <dd>
+        {profile.role}{profile.secondary_role && <> · {profile.secondary_role}</>}<br />
+        {profile.department}<br />
+        {profile.university}
+      </dd>
+    </div>
+    <div class="card">
+      <dt>Address</dt>
+      <dd>
+        {profile.department}<br />
+        {profile.university}<br />
+        {profile.address.map((a) => <>{a}<br /></>)}
+      </dd>
+    </div>
+    {profile.collaborations && profile.collaborations.length > 0 && (
+      <div class="card">
+        <dt>International collaborations</dt>
+        <dd>
+          {profile.collaborations.map((c, i) => (
+            <>
+              {i > 0 && <><br /><br /></>}
+              {c.url ? <a href={c.url} rel="noopener">{c.name}</a> : <strong style="font-weight:500">{c.name}</strong>}
+              {c.unit && <><br /><span class="muted">{c.unit}</span></>}
+              {c.people && <><br /><span class="muted">{c.people}</span></>}
+            </>
+          ))}
+        </dd>
+      </div>
+    )}
+  </dl>
+
+  <section class="section" aria-labelledby="h-elsewhere">
+    <div class="section-head"><h2 id="h-elsewhere">Elsewhere</h2></div>
+    <QuickLinks />
+    {profile.links.university_page && (
+      <p style="margin-top:1rem"><a href={profile.links.university_page} rel="noopener">University teacher page (docenti.unina.it)</a></p>
+    )}
+  </section>
+
+  {(profile.languages?.length || profile.skills?.length) && (
+    <section class="section" aria-labelledby="h-skills">
+      <div class="section-head"><h2 id="h-skills">Languages and tools</h2></div>
+      <ul class="item-list">
+        {profile.languages?.length && (
+          <li><span><strong style="font-weight:500">Languages</strong></span><span class="when"></span><span class="detail">{profile.languages.join(' · ')}</span></li>
+        )}
+        {profile.skills?.length && (
+          <li><span><strong style="font-weight:500">Programming and optimisation software</strong></span><span class="when"></span><span class="detail">{profile.skills.join(' · ')}</span></li>
+        )}
+      </ul>
+    </section>
+  )}
+</Base>

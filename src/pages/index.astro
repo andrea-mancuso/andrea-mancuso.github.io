@@ -1,0 +1,177 @@
+---
+import Base from '../layouts/Base.astro';
+import QuickLinks from '../components/QuickLinks.astro';
+import NewsList from '../components/NewsList.astro';
+import PubItem from '../components/PubItem.astro';
+import CopyBibtex from '../components/CopyBibtex.astro';
+import HeroCanvas from '../components/HeroCanvas.astro';
+import { profile, research, news, publications, publishedPapers, metrics, url, inlineMd, photoExists, formatDate } from '../lib/data';
+
+const hasPhoto = photoExists();
+const initials = profile.name.split(' ').map((p) => p[0]).join('');
+const selected = publications.filter((p) => p.selected).slice(0, 5);
+const nameParts = profile.name.split(' ');
+const last = nameParts.pop();
+const first = nameParts.join(' ');
+const paperCount = publishedPapers.length;
+const journalCount = publishedPapers.filter((p) => p.type === 'journal').length;
+const autoValues: Record<string, number | null> = {
+  auto: paperCount,
+  'auto:publications': paperCount,
+  'auto:journal': journalCount,
+  'auto:h_index': metrics.h_index,
+  'auto:citations': metrics.citations,
+};
+const stats = (profile.stats || [])
+  .map((st) => ({
+    ...st,
+    value: String(st.value in autoValues ? (autoValues[st.value] ?? '') : st.value),
+    note: st.note === 'auto' ? `${metrics.source}, ${formatDate(metrics.updated.slice(0, 7))}` : st.note,
+  }))
+  .filter((st) => st.value !== '');
+
+const sameAs = [profile.links.orcid, profile.links.scholar, profile.links.scopus, profile.links.github, profile.links.linkedin, profile.links.dblp, profile.lab_url].filter(Boolean);
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  email: `mailto:${profile.links.email}`,
+  url: Astro.site?.toString(),
+  image: hasPhoto ? new URL(url(profile.photo), Astro.site).toString() : undefined,
+  affiliation: {
+    '@type': 'CollegeOrUniversity',
+    name: profile.university,
+    department: { '@type': 'Organization', name: profile.department },
+  },
+  knowsAbout: ['Operations research', 'Mixed-integer linear programming', 'Branch-and-cut', 'Vehicle routing', 'Truck-and-drone delivery', 'Facility location', 'Covering problems', 'Operating room scheduling', 'Healthcare logistics', 'Machine learning for combinatorial optimization'],
+  sameAs,
+};
+---
+<Base jsonld={jsonld}>
+  <section class="hero-x" slot="hero" aria-labelledby="hero-name">
+    <HeroCanvas />
+    <div class="wrap hero-x-inner">
+      <div class="hero-x-text">
+        <p class="hero-x-eyebrow">{profile.department_short} · {profile.university}</p>
+        <h1 id="hero-name">
+          <span>{first}</span> <em>{last}</em>
+        </h1>
+        <p class="hero-x-role">
+          {profile.role}
+          {profile.secondary_role && <> · {profile.secondary_role}</>}
+          {profile.lab && <> · <a href={profile.lab_url} rel="noopener">{profile.lab}</a></>}
+        </p>
+        <p class="hero-x-tagline">{profile.tagline}</p>
+        <p class="hero-x-bio">{profile.bio_short}</p>
+        <QuickLinks />
+      </div>
+      <div class="hero-x-photo">
+        {hasPhoto ? (
+          <img src={url(profile.photo)} alt={profile.photo_alt} width="540" height="540" fetchpriority="high" />
+        ) : (
+          <div class="portrait-fallback" role="img" aria-label={`${profile.name} (photo coming soon)`}>{initials}</div>
+        )}
+      </div>
+    </div>
+    <p class="hero-x-hint" aria-hidden="true">Move the cursor: the facility covers nearby demand while a truck and its drone run their tour</p>
+  </section>
+
+  <section class="stats" aria-label="Key numbers">
+    {stats.map((st) => (
+      <div class="stat">
+        <span class="stat-value" data-count={/^\d+$/.test(st.value) ? st.value : undefined}>{st.value}</span>
+        <span class="stat-label">{st.label}</span>
+        {st.note && <span class="stat-note">{st.note}</span>}
+      </div>
+    ))}
+  </section>
+
+  <section class="section" aria-labelledby="h-about">
+    <div class="section-head"><h2 id="h-about">About</h2></div>
+    <div class="prose about">
+      {profile.bio_long.map((p) => <p set:html={inlineMd(p)} />)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-research">
+    <div class="section-head">
+      <h2 id="h-research">Research</h2>
+      <a class="more" href={url('research/')}>All research lines →</a>
+    </div>
+    <div class="grid-2">
+      {research.map((r, i) => (
+        <a class="card" href={url(`research/#${r.id}`)}>
+          <p class="eyebrow" style="margin-bottom:0.3rem">{String(i + 1).padStart(2, '0')}</p>
+          <h3>{r.title}</h3>
+          <p>{r.short}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-news">
+    <div class="section-head">
+      <h2 id="h-news">News</h2>
+      <a class="more" href={url('news/')}>All news →</a>
+    </div>
+    <NewsList items={news.slice(0, 5)} />
+  </section>
+
+  <section class="section" aria-labelledby="h-pubs">
+    <div class="section-head">
+      <h2 id="h-pubs">Selected publications</h2>
+      <a class="more" href={url('publications/')}>All publications →</a>
+    </div>
+    <ul class="pub-list">
+      {selected.map((p) => <PubItem pub={p} />)}
+    </ul>
+  </section>
+
+  <section class="section career" aria-labelledby="h-career">
+    <div class="career-grid">
+      <header class="career-head">
+        <p class="eyebrow">Career &amp; education</p>
+        <h2 id="h-career">The route so far</h2>
+        <p class="muted">
+          From Management Engineering to Operations Research. The main line follows my studies and
+          positions; the dashed loops are research and teaching visits abroad, like a drone that leaves
+          the truck and comes back.
+        </p>
+        <ul class="route-legend" aria-hidden="true">
+          <li><span class="lg lg-edu"></span>Education</li>
+          <li><span class="lg lg-pos"></span>Position</li>
+          <li><span class="lg lg-visit"></span>Visiting period</li>
+          <li><span class="lg lg-now"></span>Current role</li>
+        </ul>
+      </header>
+      <ol class="route">
+        <li class="route-start" aria-hidden="true"><span class="node"></span>Naples</li>
+        {profile.career.map((s, i) => (
+          <li class={`stop ${s.kind}${s.current ? ' current' : ''}`} style={`--i:${i}`}>
+            <span class="node" aria-hidden="true">
+              {s.kind === 'visiting' && (
+                <svg viewBox="0 0 20 20" width="20" height="20">
+                  <path d="M5 5 L15 15 M15 5 L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <circle cx="5" cy="5" r="2.6" /><circle cx="15" cy="15" r="2.6" />
+                  <circle cx="15" cy="5" r="2.6" /><circle cx="5" cy="15" r="2.6" />
+                </svg>
+              )}
+            </span>
+            <div class="stop-body">
+              <p class="stop-kind">
+                {{ education: 'Education', position: 'Position', visiting: 'Visiting' }[s.kind]}
+                {s.current && <span class="stop-now">current</span>}
+              </p>
+              <h3 class="stop-what">{s.what}</h3>
+              <p class="stop-where">{s.where}</p>
+              {s.detail && <p class="stop-detail" set:html={inlineMd(s.detail)} />}
+            </div>
+          </li>
+        ))}
+        <li class="route-end" aria-hidden="true"><span class="node"></span>now</li>
+      </ol>
+    </div>
+  </section>
+  <CopyBibtex />
+</Base>

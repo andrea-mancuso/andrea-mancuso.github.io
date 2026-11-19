@@ -1,0 +1,311 @@
+---
+// Built-in schematic illustrations for the research lines (used when no image is provided).
+// They are drawings, not real data. Colours follow the site theme.
+//   drones - truck tour with drone sorties (flying sidekick TSP)
+//   health - operating-room Gantt chart with an emergency and re-scheduling
+//   cover  - covering tour with coverage radii and an upgraded arc
+//   bnc    - LP polytope with a valid inequality, and a branch-and-bound tree
+interface Props {
+  kind: string;
+  alt: string;
+}
+const { kind, alt } = Astro.props;
+
+// Deterministic pseudo-random generator so the drawing is identical at every build.
+function rng(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+type P = { x: number; y: number };
+const d = (a: P, b: P) => Math.hypot(a.x - b.x, a.y - b.y);
+const f1 = (n: number) => n.toFixed(1);
+
+const W = 480;
+const H = 320;
+
+// Faint street grid used as a map background.
+const streets = (() => {
+  const r = rng(5);
+  const v: number[] = [];
+  const h: number[] = [];
+  for (let x = 12; x < W; x += 30 + r() * 22) v.push(x);
+  for (let y = 10; y < H; y += 28 + r() * 20) h.push(y);
+  return { v, h };
+})();
+
+// ---------------------------------------------------------------- drones (FSTSP)
+// A hand-placed instance: the truck tour runs clockwise from the depot; each drone sortie
+// leaves the truck at one stop, serves a customer off the route and lands on it further on.
+const route = (() => {
+  const tour: P[] = [
+    { x: 58, y: 264 }, { x: 150, y: 270 }, { x: 250, y: 246 }, { x: 342, y: 266 }, { x: 428, y: 214 },
+    { x: 418, y: 118 }, { x: 326, y: 92 }, { x: 238, y: 124 }, { x: 150, y: 108 }, { x: 92, y: 180 },
+  ];
+  const sorties = [
+    { a: tour[1], c: { x: 250, y: 300 }, b: tour[3] },
+    { a: tour[4], c: { x: 464, y: 160 }, b: tour[5] },
+    { a: tour[6], c: { x: 262, y: 50 }, b: tour[8] },
+  ];
+  const path = tour.map((p, i) => `${i ? 'L' : 'M'}${f1(p.x)} ${f1(p.y)}`).join(' ') + ' Z';
+  return { tour, sorties, path };
+})();
+
+// ---------------------------------------------------------------- health (OR Gantt)
+const g = { x0: 74, x1: 462, top: 52, row: 46, h: 30 };
+const hx = (h: number) => g.x0 + ((h - 8) / 12) * (g.x1 - g.x0); // 8:00 – 20:00
+const hy = (i: number) => g.top + i * g.row;
+// [room, start, end, specialty]  specialty: 0 accent, 1 drone, 2 accent-soft
+const elective: [number, number, number, number][] = [
+  [0, 8, 10.5, 0], [0, 11, 13.5, 0], [0, 14, 16.5, 2], [0, 17, 19, 2],
+  [1, 8, 9.75, 1], [1, 10.25, 12.25, 1], [1, 14.5, 16.5, 1], [1, 17, 18.5, 2],
+  [2, 8, 11, 2], [2, 11.5, 14, 0], [2, 14.5, 17.5, 0],
+  [3, 8.5, 10.5, 1], [3, 11, 12.75, 2], [3, 13.25, 15.75, 1], [3, 16.25, 18.25, 1],
+];
+const emergency = { room: 1, start: 12.5, end: 14.25 };
+// Surgeries of OR 2 after the emergency are moved later (originally they started at 12.75 and 14.5).
+const moved: { from: number; to: number; len: number; spec: number }[] = [
+  { from: 12.75, to: 14.5, len: 2, spec: 1 },
+  { from: 14.75, to: 17, len: 1.5, spec: 2 },
+];
+const electiveShown = elective.filter((e) => !(e[0] === 1 && e[1] >= 14));
+const specFill = ['var(--accent)', 'var(--drone)', 'var(--accent-soft)'];
+const specText = ['var(--surface)', 'var(--surface)', 'var(--accent)'];
+
+// ---------------------------------------------------------------- cover (covering tour + upgrade)
+const ctp = (() => {
+  const R = 54;
+  const stops: P[] = [
+    { x: 72, y: 112 }, { x: 176, y: 74 }, { x: 294, y: 98 }, { x: 332, y: 206 }, { x: 216, y: 252 }, { x: 92, y: 222 },
+  ];
+  const r = rng(77);
+  const demand: P[] = [];
+  let guard = 0;
+  while (demand.length < 30 && guard++ < 5000) {
+    const s = stops[Math.floor(r() * stops.length)];
+    const ang = r() * Math.PI * 2, rad = 14 + r() * (R - 20);
+    const p = { x: s.x + Math.cos(ang) * rad, y: s.y + Math.sin(ang) * rad };
+    if (demand.some((q) => d(p, q) < 15) || stops.some((q) => d(p, q) < 12)) continue;
+    if (p.x < 18 || p.y < 40 || p.x > W - 18 || p.y > H - 46) continue;
+    demand.push(p);
+  }
+  const far = { x: 440, y: 128 };
+  const mid = { x: 402, y: 170 };
+  const path = stops.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' ') + ' Z';
+  return { R, stops, demand, far, mid, path, anchor: stops[3] };
+})();
+
+// ---------------------------------------------------------------- bnc (polytope + B&B)
+const lp = { ox: 30, oy: 282, s: 34 };
+const X = (x: number) => lp.ox + x * lp.s;
+const Y = (y: number) => lp.oy - y * lp.s;
+const poly: [number, number][] = [[0, 0], [4.6, 0], [4.2, 2.3], [2.5, 4.1], [0, 4.5]];
+const inside = (x: number, y: number) =>
+  poly.every(([ax, ay], i) => {
+    const [bx, by] = poly[(i + 1) % poly.length];
+    return (bx - ax) * (y - ay) - (by - ay) * (x - ax) >= -1e-9;
+  });
+const lattice: { x: number; y: number; in: boolean }[] = [];
+for (let x = 0; x <= 5; x++) for (let y = 0; y <= 5; y++) lattice.push({ x, y, in: inside(x, y) });
+const polyPath = poly.map(([x, y], i) => `${i ? 'L' : 'M'}${f1(X(x))} ${f1(Y(y))}`).join(' ') + ' Z';
+// Part of the polytope cut off by the valid inequality x1 + x2 <= 6.
+const cutOff = `M${f1(X(4.305))} ${f1(Y(1.695))} L${f1(X(4.2))} ${f1(Y(2.3))} L${f1(X(2.5))} ${f1(Y(4.1))} L${f1(X(1.786))} ${f1(Y(4.214))} Z`;
+type Node = { x: number; y: number; t: string; sub: string; state?: 'int' | 'pruned' | 'inf' };
+const tree: Node[] = [
+  { x: 392, y: 70, t: 'LP 14.9', sub: '' },
+  { x: 340, y: 150, t: 'LP 14.8', sub: '' },
+  { x: 442, y: 150, t: 'LP 13.6', sub: 'pruned', state: 'pruned' },
+  { x: 298, y: 232, t: '14 ✓', sub: 'incumbent', state: 'int' },
+  { x: 386, y: 232, t: '—', sub: 'infeasible', state: 'inf' },
+];
+const treeEdges: [number, number, string][] = [
+  [0, 1, 'x₂ ≤ 2'], [0, 2, 'x₂ ≥ 3'], [1, 3, 'x₁ ≤ 4'], [1, 4, 'x₁ ≥ 5'],
+];
+---
+<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={alt} preserveAspectRatio="xMidYMid slice">
+  <title>{alt}</title>
+  {kind === 'drones' && (
+    <>
+      <rect width={W} height={H} fill="var(--surface)" />
+      <g stroke="var(--rule)" stroke-width="1">
+        {streets.v.map((x) => <line x1={x} y1="0" x2={x} y2={H} />)}
+        {streets.h.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+      </g>
+      <path d={route.path} fill="none" stroke="var(--warm)" stroke-width="2.4" stroke-linejoin="round" />
+      <g fill="none" stroke="var(--drone)" stroke-width="1.8" stroke-dasharray="5 4">
+        {route.sorties.map((s) => (
+          <path d={`M${f1(s.a.x)} ${f1(s.a.y)} L${f1(s.c.x)} ${f1(s.c.y)} L${f1(s.b.x)} ${f1(s.b.y)}`} />
+        ))}
+      </g>
+      <g>
+        {route.tour.slice(1).map((p) => (
+          <circle cx={f1(p.x)} cy={f1(p.y)} r="6" fill="var(--surface)" stroke="var(--warm)" stroke-width="2" />
+        ))}
+        {route.sorties.map((s) => (
+          <circle cx={f1(s.c.x)} cy={f1(s.c.y)} r="6" fill="var(--drone-soft)" stroke="var(--drone)" stroke-width="2" />
+        ))}
+        <rect x={route.tour[0].x - 8} y={route.tour[0].y - 8} width="16" height="16" rx="2" fill="var(--warm)" />
+      </g>
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-2)">
+        <text x={route.tour[0].x} y={route.tour[0].y + 24} text-anchor="middle">depot</text>
+        <text x={route.sorties[0].a.x} y={route.sorties[0].a.y + 24} text-anchor="middle">launch</text>
+        <text x={route.sorties[0].b.x + 10} y={route.sorties[0].b.y + 24}>rendezvous</text>
+      </g>
+      <g font-family="var(--font-mono)" font-size="11" fill="var(--ink)">
+        <rect x="10" y="10" width="196" height="64" rx="4" fill="var(--surface)" stroke="var(--rule-strong)" opacity="0.96" />
+        <line x1="20" y1="27" x2="42" y2="27" stroke="var(--warm)" stroke-width="2.4" />
+        <text x="50" y="31">truck route</text>
+        <line x1="20" y1="45" x2="42" y2="45" stroke="var(--drone)" stroke-width="1.8" stroke-dasharray="5 4" />
+        <text x="50" y="49">drone sortie</text>
+        <circle cx="31" cy="62" r="5" fill="var(--drone-soft)" stroke="var(--drone)" stroke-width="1.8" />
+        <text x="50" y="66">served by drone</text>
+      </g>
+    </>
+  )}
+  {kind === 'health' && (
+    <>
+      <rect width={W} height={H} fill="var(--surface)" />
+      <g stroke="var(--rule)" stroke-width="1">
+        {[8, 10, 12, 14, 16, 18, 20].map((h) => <line x1={hx(h)} y1={g.top - 10} x2={hx(h)} y2={hy(4) - 6} />)}
+      </g>
+      <g font-family="var(--font-mono)" font-size="10" fill="var(--ink-3)" text-anchor="middle">
+        {[8, 10, 12, 14, 16, 18, 20].map((h) => <text x={hx(h)} y={hy(4) + 8}>{`${h}:00`}</text>)}
+      </g>
+      <g font-family="var(--font-mono)" font-size="11" fill="var(--ink-2)">
+        {[0, 1, 2, 3].map((i) => <text x="14" y={hy(i) + g.h / 2 + 4}>{`OR ${i + 1}`}</text>)}
+      </g>
+      <g>
+        {electiveShown.map(([room, a, b, sp]) => (
+          <rect x={f1(hx(a) + 1)} y={hy(room)} width={f1(hx(b) - hx(a) - 2)} height={g.h} rx="4" fill={specFill[sp]} stroke={sp === 2 ? 'var(--accent)' : 'none'} stroke-width="1" opacity={sp === 2 ? 1 : 0.85} />
+        ))}
+        {moved.map((m) => (
+          <>
+            <rect x={f1(hx(m.from) + 1)} y={hy(emergency.room) + 3} width={f1(hx(m.from + m.len) - hx(m.from) - 2)} height={g.h - 6} rx="4" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3" />
+            <rect x={f1(hx(m.to) + 1)} y={hy(emergency.room)} width={f1(hx(m.to + m.len) - hx(m.to) - 2)} height={g.h} rx="4" fill={specFill[m.spec]} stroke={m.spec === 2 ? 'var(--accent)' : 'none'} opacity={m.spec === 2 ? 1 : 0.85} />
+          </>
+        ))}
+        <rect x={f1(hx(emergency.start) + 1)} y={hy(emergency.room) - 3} width={f1(hx(emergency.end) - hx(emergency.start) - 2)} height={g.h + 6} rx="4" fill="var(--warm)" />
+        <text x={f1((hx(emergency.start) + hx(emergency.end)) / 2)} y={hy(emergency.room) + g.h / 2 + 4} text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--surface)">urgent</text>
+      </g>
+      <g stroke="var(--ink-2)" stroke-width="1.3" fill="none">
+        <path d={`M${f1(hx(12.4))} ${g.top - 18} V${hy(4) - 6}`} stroke-dasharray="2 3" />
+        <path d={`M${f1(hx(13.9))} ${hy(1) + g.h + 6} C ${f1(hx(14.3))} ${hy(1) + g.h + 14}, ${f1(hx(14.9))} ${hy(1) + g.h + 14}, ${f1(hx(15.3))} ${hy(1) + g.h + 4}`} />
+        <path d={`M${f1(hx(15.3) - 5)} ${hy(1) + g.h + 6} l5 -3 1 6`} />
+      </g>
+      <text x={f1(hx(12.4) + 5)} y={g.top - 10} font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">emergency arrives · re-optimise</text>
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink)">
+        <rect x="74" y={H - 30} width="14" height="10" rx="2" fill="var(--accent)" opacity="0.85" />
+        <text x="94" y={H - 21}>elective</text>
+        <rect x="164" y={H - 30} width="14" height="10" rx="2" fill="var(--warm)" />
+        <text x="184" y={H - 21}>emergency</text>
+        <rect x="266" y={H - 30} width="14" height="10" rx="2" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3" />
+        <text x="286" y={H - 21}>slot before re-scheduling</text>
+      </g>
+    </>
+  )}
+  {kind === 'cover' && (
+    <>
+      <rect width={W} height={H} fill="var(--surface)" />
+      <g stroke="var(--rule)" stroke-width="1">
+        {streets.v.map((x) => <line x1={x} y1="0" x2={x} y2={H} />)}
+        {streets.h.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+      </g>
+      <g>
+        {ctp.stops.map((p) => (
+          <circle cx={p.x} cy={p.y} r={ctp.R} fill="var(--accent-soft)" fill-opacity="0.75" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 4" />
+        ))}
+      </g>
+      <path d={ctp.path} fill="none" stroke="var(--warm)" stroke-width="2.4" stroke-linejoin="round" />
+      <g stroke="var(--ink-3)" stroke-width="1.2">
+        <line x1={ctp.anchor.x} y1={ctp.anchor.y} x2={ctp.mid.x} y2={ctp.mid.y} stroke-dasharray="3 3" />
+      </g>
+      <line x1={ctp.mid.x} y1={ctp.mid.y} x2={ctp.far.x} y2={ctp.far.y} stroke="var(--drone)" stroke-width="4" stroke-linecap="round" />
+      <g fill="var(--accent)">
+        {ctp.demand.map((p) => <circle cx={f1(p.x)} cy={f1(p.y)} r="3.4" />)}
+      </g>
+      <circle cx={ctp.mid.x} cy={ctp.mid.y} r="3.4" fill="var(--ink-3)" />
+      <circle cx={ctp.far.x} cy={ctp.far.y} r="5.5" fill="var(--accent)" stroke="var(--drone)" stroke-width="2.5" />
+      <g>
+        {ctp.stops.map((p) => (
+          <rect x={p.x - 6} y={p.y - 6} width="12" height="12" rx="2" fill="var(--warm)" stroke="var(--surface)" stroke-width="1.5" />
+        ))}
+      </g>
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-2)">
+        <text x="472" y={ctp.far.y - 26} text-anchor="end">covered after</text>
+        <text x="472" y={ctp.far.y - 13} text-anchor="end">the upgrade</text>
+        <text x="472" y={ctp.mid.y + 26} text-anchor="end">upgraded arc</text>
+      </g>
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink)">
+        <rect x="10" y={H - 30} width="458" height="22" rx="4" fill="var(--surface)" stroke="var(--rule-strong)" opacity="0.96" />
+        <rect x="20" y={H - 24} width="10" height="10" rx="2" fill="var(--warm)" />
+        <text x="36" y={H - 15}>tour stop</text>
+        <circle cx="118" cy={H - 19} r="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="3 2" />
+        <text x="130" y={H - 15}>coverage radius</text>
+        <circle cx="252" cy={H - 19} r="3.4" fill="var(--accent)" />
+        <text x="262" y={H - 15}>demand node</text>
+        <line x1="356" y1={H - 19} x2="374" y2={H - 19} stroke="var(--drone)" stroke-width="4" stroke-linecap="round" />
+        <text x="382" y={H - 15}>upgrade</text>
+      </g>
+    </>
+  )}
+  {kind === 'bnc' && (
+    <>
+      <rect width={W} height={H} fill="var(--surface)" />
+      <g stroke="var(--rule-strong)" stroke-width="1.2">
+        <line x1={X(0)} y1={Y(0)} x2={X(5.4)} y2={Y(0)} />
+        <line x1={X(0)} y1={Y(0)} x2={X(0)} y2={Y(5.6)} />
+      </g>
+      <g font-family="var(--font-mono)" font-size="11" fill="var(--ink-3)">
+        <text x={X(5.4) - 4} y={Y(0) + 16} text-anchor="end">x₁</text>
+        <text x={X(0) - 18} y={Y(5.6) + 10}>x₂</text>
+      </g>
+      <path d={polyPath} fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round" />
+      <path d={cutOff} fill="var(--warm-soft)" stroke="none" />
+      <line x1={X(1.15)} y1={Y(4.85)} x2={X(4.75)} y2={Y(1.25)} stroke="var(--drone)" stroke-width="2" stroke-dasharray="6 4" />
+      <g>
+        {lattice.map((p) => (
+          <circle cx={X(p.x)} cy={Y(p.y)} r={p.in ? 3 : 2} fill={p.in ? 'var(--accent)' : 'var(--rule-strong)'} />
+        ))}
+      </g>
+      <circle cx={X(4.2)} cy={Y(2.3)} r="5.5" fill="var(--warm)" stroke="var(--surface)" stroke-width="1.5" />
+      <circle cx={X(4)} cy={Y(2)} r="6.5" fill="none" stroke="var(--accent)" stroke-width="2" />
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-2)">
+        <text x={X(4.2) + 8} y={Y(2.3) - 8} font-size="10">LP optimum</text>
+        <text x={X(4) - 10} y={Y(2) + 19} text-anchor="end" font-size="10">integer optimum</text>
+        <text x={X(1.2)} y={Y(4.95) - 6} fill="var(--drone)">x₁ + x₂ ≤ 6 (valid cut)</text>
+        <text x={X(0) + 8} y={Y(0) - 10} fill="var(--ink-3)">max 3x₁ + x₂</text>
+      </g>
+      <line x1="254" y1="30" x2="254" y2={H - 24} stroke="var(--rule)" stroke-width="1" />
+      <g font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-3)">
+        <text x="14" y="24">LP relaxation and a cutting plane</text>
+        <text x="268" y="24">branch-and-bound tree</text>
+      </g>
+      <g stroke="var(--rule-strong)" stroke-width="1.4">
+        {treeEdges.map(([a, b]) => <line x1={tree[a].x} y1={tree[a].y + 15} x2={tree[b].x} y2={tree[b].y - 15} />)}
+      </g>
+      <g font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">
+        {treeEdges.map(([a, b, label]) => (
+          <text x={(tree[a].x + tree[b].x) / 2 + (tree[b].x < tree[a].x ? -6 : 6)} y={(tree[a].y + tree[b].y) / 2 + 4} text-anchor={tree[b].x < tree[a].x ? 'end' : 'start'}>{label}</text>
+        ))}
+      </g>
+      <g font-family="var(--font-mono)" text-anchor="middle">
+        {tree.map((n) => (
+          <>
+            <rect
+              x={n.x - 31} y={n.y - 15} width="62" height="30" rx="6"
+              fill={n.state === 'int' ? 'var(--accent)' : n.state === 'pruned' || n.state === 'inf' ? 'var(--surface-2)' : 'var(--accent-soft)'}
+              stroke={n.state === 'int' ? 'var(--accent)' : 'var(--rule-strong)'}
+              stroke-dasharray={n.state === 'pruned' || n.state === 'inf' ? '4 3' : undefined}
+            />
+            <text x={n.x} y={n.y + 4} font-size="12" fill={n.state === 'int' ? 'var(--surface)' : 'var(--ink)'}>{n.t}</text>
+            {n.sub && <text x={n.x} y={n.y + 30} font-size="9.5" fill="var(--ink-3)">{n.sub}</text>}
+          </>
+        ))}
+      </g>
+    </>
+  )}
+</svg>

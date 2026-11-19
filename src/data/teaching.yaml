@@ -1,0 +1,119 @@
+# ------------------------------------------------------------------
+# Teaching & students, shown on /teaching.
+# ------------------------------------------------------------------
+
+# Courses you teach as instructor of record (newest first).
+courses:
+  - name: Optimization and Decision Making for Management
+    credits: 9 ECTS
+    programme: MSc in Statistics for Decision Sciences, University of Naples Federico II
+    years: 2024/25 – present
+  - name: Visiting Professor, Erasmus+ Staff Mobility for Teaching
+    credits: 35 hours
+    programme: University of Cádiz, Spain (5 January – 6 March 2026)
+    years: "2026"
+  - name: Mathematical Modeling for Decision Support (short course)
+    credits: 1.5 ECTS
+    programme: International School for Social and Business Studies, Celje, Slovenia
+    years: Oct 2025
+
+# Teaching assistance (all at the University of Naples Federico II).
+assistance:
+  - name: Operations Research
+    programme: BSc in Management Engineering, course of Prof. C. Sterle
+    years: 2020/21 – 2024/25
+  - name: Models and Algorithms of Optimization
+    programme: MSc in Automation Engineering, course of Prof. C. Sterle
+    years: 2020/21 – 2024/25
+  - name: Operations Research II
+    programme: MSc in Management Engineering, course of Prof. M. Boccia
+    years: 2020/21 – 2024/25
+  - name: Mathematical Analysis I
+    programme: BSc in Computer, Automation, Biomedical and Electrical Engineering, courses of Prof. S. Toscano (2021/22) and Prof. T. Radice (2022/23)
+    years: 2021/22 – 2022/23
+  - name: Geometry
+    programme: BSc in Computer Science, course of Prof. F. Cioffi
+    years: 2021/22
+
+supervision:
+  summary: >-
+    Theses I have supervised or co-supervised at the University of Naples Federico II, from
+    facility location for 15-minute cities to truck-and-drone logistics, political districting
+    and operating theatre management.
+  # level: BSc | MSc | PhD (optional); role: supervisor | co-supervisor; grade: optional.
+  theses:
+    - student: Giuseppe Cioffo
+      title: Designing Sustainable Mobility Networks for 15-Minute Cities – An Optimization Approach
+      year: "2025"
+      role: supervisor
+      grade: 110/110 cum laude
+    - student: Erica Ferrone
+      title: Facility Location Models for Sustainable 15-Minute City Design
+      year: "2025"
+      role: supervisor
+      grade: 110/110 cum laude
+    - student: Alessandra Russo
+      title: Alternative Optimization Approaches for Facility Location in 15-Minute City Design
+      year: ongoing
+      role: supervisor
+    - student: Mariagrazia D'Anania
+      title: Truck-and-Drone Optimization for Sustainable Last-Mile Logistics
+      year: ongoing
+      role: supervisor
+    - student: Angelica Bruno
+      title: Optimization Models for Political Districting and Electoral Territory Design
+      year: ongoing
+      role: supervisor
+    - student: Daniela Morelli
+      title: Parcel Lockers in Last-Mile Logistics – Optimal Location Criteria and Methods
+      year: "2023"
+      role: co-supervisor
+      grade: 110/110
+    - student: Federica Frezza
+      title: Master Surgical Scheduling – A Unified Optimization-Based Framework for Different Problem Variants
+      year: "2021"
+      role: co-supervisor
+      grade: 110/110 cum laude
+    - student: Maria Antonietta Boccia
+      title: The Management of the Hospital Operating Block – Methods of Optimization and Applications in the Betania Evangelical Hospital Case Study
+      year: "2021"
+      role: co-supervisor
+      grade: 110/110 cum laude
+
+# Open thesis proposals.
+# Set draft: false to publish a proposal. Drafts are visible only in local preview (npm run dev).
+proposals_intro: >-
+  Are you a student interested in optimisation and Operations Research? Here are some thesis
+  proposals. If a topic interests you, email me with your degree programme, the exams you have
+  passed and your expected graduation date.
+
+proposals:
+  - title: Locating services for the 15-minute city
+    level: MSc
+    draft: true
+    description: >-
+      Formulate and solve covering and facility location models to decide where to open
+      essential services (schools, pharmacies, health centres) so that they can be reached on
+      foot or by bike, using real data from an Italian city.
+    skills: [Python, Gurobi, geographic data]
+  - title: Trucks and drones for last-mile delivery
+    level: MSc
+    draft: true
+    description: >-
+      Study variants of the flying sidekick traveling salesman problem and compare MILP
+      formulations and heuristics on benchmark instances and realistic scenarios.
+    skills: [Python, integer linear programming, heuristics]
+  - title: Machine learning to guide the solution of routing problems
+    level: MSc
+    draft: true
+    description: >-
+      Train classifiers that anticipate part of the solution (for instance, which customers the
+      drone should serve) and measure how much they speed up an exact solver or a matheuristic.
+    skills: [Python, scikit-learn, optimisation]
+  - title: Optimisation models for electoral districting
+    level: MSc
+    draft: true
+    description: >-
+      Formulate political districting as a graph partitioning problem with population balance,
+      contiguity and compactness constraints, and apply it to ISTAT data.
+    skills: [graph optimisation, Python, territorial data]
