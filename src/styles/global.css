@@ -434,7 +434,7 @@ main:has(> .hero-x) {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(7, 11, 24, 0.74) 0%, rgba(7, 11, 24, 0.52) 36%, rgba(7, 11, 24, 0) 62%),
+    linear-gradient(90deg, rgba(7, 11, 24, 0.92) 0%, rgba(7, 11, 24, 0.7) 38%, rgba(7, 11, 24, 0) 70%),
     linear-gradient(0deg, rgba(7, 11, 24, 0.85) 0%, rgba(7, 11, 24, 0) 22%);
 }
 .hero-x-inner {
@@ -554,80 +554,7 @@ main:has(> .hero-x) {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.55);
 }
-/* Legend and covering-radius slider of the hero animation */
-.hero-ctrl {
-  position: absolute;
-  z-index: 2;
-  top: 2.6rem;
-  right: var(--gutter);
-  display: grid;
-  gap: 0.5rem;
-  width: 16.5rem;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid rgba(159, 178, 255, 0.22);
-  border-radius: 10px;
-  background: rgba(7, 11, 24, 0.72);
-  backdrop-filter: blur(6px);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.72);
-}
-.hero-legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 0.9rem;
-}
-.hero-legend li {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.hero-legend i {
-  display: inline-block;
-  width: 16px;
-}
-.lg-truck {
-  border-top: 2px solid #ffb36f;
-}
-.lg-drone {
-  border-top: 2px dashed #63d6ca;
-}
-.lg-fac {
-  width: 9px !important;
-  height: 9px;
-  background: #9fb2ff;
-  transform: rotate(45deg);
-}
-.hero-radius {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 0.2rem 0.6rem;
-}
-.hero-radius span {
-  grid-column: 1 / -1;
-}
-.hero-radius input {
-  width: 100%;
-  accent-color: #9fb2ff;
-  cursor: pointer;
-}
-.hero-radius output {
-  min-width: 3.6em;
-  text-align: right;
-  color: #c9d3ff;
-}
-.hero-readout {
-  margin: 0;
-  color: #c9d3ff;
-}
-
 @media (max-width: 800px) {
-  .hero-ctrl {
-    display: none;
-  }
   .hero-x {
     min-height: 0;
   }

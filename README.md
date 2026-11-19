@@ -73,14 +73,13 @@ Rileggile e metti `draft: false` per pubblicarle.
 - **Foto**: `public/images/profile.jpg` (quadrata, circa 600×600 px). Se manca, compaiono le iniziali.
 - **CV in PDF**: al momento il sito non lo mostra. Per rimettere il pulsante "CV (PDF)" copia il file in
   `public/cv/` e scrivi il percorso in `cv_pdf` dentro `profile.yaml` (es. `cv/Andrea_Mancuso_CV.pdf`).
-- **Animazione in home**: è in `src/components/HeroCanvas.astro`. Il camion fa un tour su tutta la larghezza
+- **Animazione in home**: è in `src/components/HeroCanvas.astro`. Il camion fa un tour a destra del testo
   (nearest neighbour + 2-opt) e il drone serve i clienti esterni al tour: parte dal camion in una fermata,
   serve il cliente e riatterra su una fermata successiva, scelta tra le tre seguenti per ridurre l'attesa.
   Camion e drone hanno velocità diverse (`DRONE_SPEED`, rapporto drone/camion, in cima al file, insieme
-  all'autonomia `ENDURANCE`): chi arriva prima all'appuntamento aspetta l'altro. Due facility fisse, una al
-  centro e una in basso a destra, con il tour che passa lontano da loro; il cursore del pannello in alto a destra cambia
-  il raggio di copertura, e una terza facility segue il mouse. Con "riduci movimento" attivo nel sistema
-  operativo viene mostrato un solo fotogramma fisso.
+  all'autonomia `ENDURANCE`): chi arriva prima all'appuntamento aspetta l'altro. Una facility segue il mouse
+  e copre la domanda nel suo raggio. Con "riduci movimento" attivo nel sistema operativo viene mostrato un
+  solo fotogramma fisso.
 - **Anteprima social** (`public/og.png`): se cambi nome o ruolo, rigenerala con `python scripts/make-og.py`
   (serve Pillow: `pip install pillow`).
 
