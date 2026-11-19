@@ -12,8 +12,9 @@
 //   within the drone's flight range (ENDURANCE). The drone flies one sortie at a time.
 //
 // Covering location
-// - Two fixed facilities are placed with a greedy maximal covering heuristic; the slider in the
-//   top right changes their covering radius. A third, mobile facility follows the pointer.
+// - Two fixed facilities, one in the centre of the hero and one in the bottom right; the truck
+//   tour and the drone sorties keep clear of them. The slider in the top right changes the
+//   covering radius. A third, mobile facility follows the pointer.
 //   Each demand point is assigned to the closest facility that covers it.
 //
 // Purely decorative except the slider; with reduced motion a single frame is drawn.
@@ -102,17 +103,22 @@
     // ---- areas kept free: the text column, the photo and the control panel
     type Zone = { rect?: DOMRect; circle?: { x: number; y: number; r: number } };
     let zones: Zone[] = [];
+    let textBox: DOMRect | null = null;
+    let photoCircle: { x: number; y: number; r: number } | null = null;
     function measureZones() {
       const h = hero!.getBoundingClientRect();
       const rel = (r: DOMRect, pad: number) =>
         new DOMRect(r.left - h.left - pad, r.top - h.top - pad, r.width + 2 * pad, r.height + 2 * pad);
       zones = [];
       const text = hero!.querySelector<HTMLElement>('.hero-x-text');
-      if (text && wide) zones.push({ rect: rel(text.getBoundingClientRect(), 26) });
+      textBox = text ? rel(text.getBoundingClientRect(), 26) : null;
+      if (textBox && wide) zones.push({ rect: textBox });
       const photo = hero!.querySelector<HTMLElement>('.hero-x-photo');
+      photoCircle = null;
       if (photo) {
         const r = photo.getBoundingClientRect();
-        zones.push({ circle: { x: r.left - h.left + r.width / 2, y: r.top - h.top + r.height / 2, r: r.width / 2 + 30 } });
+        photoCircle = { x: r.left - h.left + r.width / 2, y: r.top - h.top + r.height / 2, r: r.width / 2 + 30 };
+        zones.push({ circle: photoCircle });
       }
       if (ctrl && wide) zones.push({ rect: rel(ctrl.getBoundingClientRect(), 14) });
     }
@@ -123,6 +129,7 @@
         if (z.rect && p.x > z.rect.left && p.x < z.rect.right && p.y > z.rect.top && p.y < z.rect.bottom) return true;
         if (z.circle && dist(p, z.circle) < z.circle.r) return true;
       }
+      if (fixed.some((f) => dist(p, f) < FAC_CLEAR)) return true;
       return false;
     }
 
@@ -185,7 +192,23 @@
     }
 
     // ---- truck tour across the whole hero
+    // Several random tours are built; the one whose edges stay farthest from the fixed facilities wins.
     function buildTour() {
+      let best: P[] = [], bestScore = -1;
+      for (let attempt = 0; attempt < 40; attempt++) {
+        buildTourOnce();
+        const score = Math.min(
+          Infinity,
+          ...fixed.map((f) => Math.min(...tour.map((q, k) => segDist(f, q, tour[(k + 1) % tour.length])))),
+        );
+        if (score > bestScore) { bestScore = score; best = tour; }
+        if (score > FAC_CLEAR * 0.85) break;
+      }
+      tour = best;
+      cum = [0];
+      for (let i = 1; i <= tour.length; i++) cum.push(cum[i - 1] + dist(tour[i - 1], tour[i % tour.length]));
+    }
+    function buildTourOnce() {
       const n = wide ? Math.max(10, Math.min(16, Math.round(W / 100))) : 8;
       const minD = wide ? Math.max(70, Math.min(110, W / 15)) : Math.max(55, W / 6);
       const pts: P[] = [];
@@ -194,7 +217,11 @@
         const p = { x: W * (0.7 + Math.random() * 0.25), y: H * (0.55 + Math.random() * 0.3) };
         if (!blocked(p, 30)) pts.push(p);
       }
-      if (!pts.length) pts.push({ x: W * 0.85, y: H * 0.7 });
+      for (let g = 0; g < 2000 && !pts.length; g++) {
+        const p = { x: W * (0.05 + Math.random() * 0.9), y: H * (0.1 + Math.random() * 0.8) };
+        if (!blocked(p, 30)) pts.push(p);
+      }
+      if (!pts.length) pts.push({ x: W * 0.85, y: H * 0.3 });
       let guard = 0;
       while (pts.length < n && guard++ < 6000) {
         const p = { x: W * (0.03 + Math.random() * 0.94), y: H * (0.08 + Math.random() * 0.86) };
@@ -250,6 +277,7 @@
               if (blocked(c, 18) || insidePolygon(c, tour)) continue;
               const clear = Math.min(...tour.map((q, k) => segDist(c, q, tour[(k + 1) % n])));
               if (clear < 34) continue;
+              if (fixed.some((f) => segDist(f, a, c) < 45 || segDist(f, c, b) < 45)) continue;
               if (placed.some((q) => dist(q, c) < 50)) continue;
               const fly = dist(a, c) + dist(c, b);
               if (fly > range) continue;
@@ -306,34 +334,26 @@
     }
 
     // ---- fixed facilities: greedy maximal covering location
+    // Reference radius used to keep the truck tour and the drone sorties off the fixed facilities.
+    const FAC_CLEAR = 130;
     function placeFacilities() {
-      const count = wide ? 2 : 1;
-      const r = radius;
-      const covered = new Set<number>();
       fixed = [];
-      // Keep the coverage areas off the text column and away from the photo, so they stay readable.
-      const clearOfZones = (d: P) =>
-        zones.every((z) => {
-          if (z.rect) {
-            const dx = Math.max(z.rect.left - d.x, 0, d.x - z.rect.right);
-            const dy = Math.max(z.rect.top - d.y, 0, d.y - z.rect.bottom);
-            return Math.hypot(dx, dy) > r * 0.6;
-          }
-          return z.circle ? dist(d, z.circle) > z.circle.r + r * 0.25 : true;
-        });
-      const sites = demand.filter((d) => !blocked(d, r * 0.4) && clearOfZones(d) && d.y < H - 78 - r * 0.3);
-      for (let f = 0; f < count; f++) {
-        let best: Demand | null = null, gain = -1;
-        for (const s of sites) {
-          if (fixed.some((q) => dist(q, s) < r * 1.4)) continue;
-          let g = 0;
-          demand.forEach((d, idx) => { if (!covered.has(idx) && dist(d, s) <= r) g += d.w; });
-          if (g > gain) { gain = g; best = s; }
-        }
-        if (!best) break;
-        fixed.push({ x: best.x, y: best.y });
-        demand.forEach((d, idx) => { if (dist(d, best!) <= r) covered.add(idx); });
+      if (!wide) {
+        fixed.push({ x: W * 0.5, y: H * 0.62 });
+        return;
       }
+      // Centre of the hero, moved into the free space between the text and the photo if needed.
+      let cx = W / 2;
+      const cy = H / 2;
+      if (textBox && photoCircle) {
+        const left = textBox.right, right = photoCircle.x - photoCircle.r;
+        if (cx < left || cx > right) cx = right > left ? (left + right) / 2 : left + 10;
+      }
+      fixed.push({ x: cx, y: cy });
+      // Bottom right, above the key-numbers card and below the photo.
+      const br = { x: W - Math.max(48, W * 0.035) - FAC_CLEAR * 0.75, y: H - 78 - FAC_CLEAR * 0.7 };
+      if (photoCircle && dist(br, photoCircle) < photoCircle.r + 40) br.y = Math.min(H - 90, photoCircle.y + photoCircle.r + 40);
+      fixed.push(br);
     }
 
     function resize() {
@@ -346,10 +366,10 @@
       measureZones();
       buildMap();
       buildDemand();
+      placeFacilities();
       buildTour();
       buildSorties();
       schedule();
-      placeFacilities();
       if (!pointerActive) {
         mob.x = mob.tx = wide ? W * 0.58 : W * 0.5;
         mob.y = mob.ty = H * 0.3;

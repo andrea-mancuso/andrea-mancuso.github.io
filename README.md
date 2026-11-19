@@ -77,8 +77,8 @@ Rileggile e metti `draft: false` per pubblicarle.
   (nearest neighbour + 2-opt) e il drone serve i clienti esterni al tour: parte dal camion in una fermata,
   serve il cliente e riatterra su una fermata successiva, scelta tra le tre seguenti per ridurre l'attesa.
   Camion e drone hanno velocità diverse (`DRONE_SPEED`, rapporto drone/camion, in cima al file, insieme
-  all'autonomia `ENDURANCE`): chi arriva prima all'appuntamento aspetta l'altro. Due facility fisse sono
-  posizionate con un'euristica greedy di maximal covering; il cursore del pannello in alto a destra cambia
+  all'autonomia `ENDURANCE`): chi arriva prima all'appuntamento aspetta l'altro. Due facility fisse, una al
+  centro e una in basso a destra, con il tour che passa lontano da loro; il cursore del pannello in alto a destra cambia
   il raggio di copertura, e una terza facility segue il mouse. Con "riduci movimento" attivo nel sistema
   operativo viene mostrato un solo fotogramma fisso.
 - **Anteprima social** (`public/og.png`): se cambi nome o ruolo, rigenerala con `python scripts/make-og.py`
