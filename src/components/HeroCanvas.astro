@@ -1,21 +1,59 @@
 ---
 // Animated night map behind the home hero: a small Operations Research instance.
-// - Demand points are scattered over a street grid.
-// - A truck tour (TSP, nearest neighbour + 2-opt) starts at the depot; a drone leaves the truck,
-//   serves a customer and lands on the truck a few stops later (flying sidekick TSP).
-// - A facility follows the pointer and covers the demand within its radius (covering location).
-// Purely decorative (aria-hidden); a single static frame is drawn when reduced motion is requested.
+//
+// Truck and drone (flying sidekick TSP)
+// - The truck visits its customers on a tour (nearest neighbour + 2-opt) that starts and ends
+//   at the depot and runs across the whole hero, around the text and the photo.
+// - The drone serves the customers outside the truck tour. A sortie is a triple (i, c, j): the
+//   drone is launched from the truck at stop i, serves customer c and is recovered by the truck
+//   at a later stop j. The two vehicles have their own speeds (DRONE_SPEED below) and must meet
+//   at j: whoever arrives first waits for the other (the truck stops, or the drone hovers).
+//   For each launch stop, j is chosen among the next three stops to minimise that waiting time,
+//   within the drone's flight range (ENDURANCE). The drone flies one sortie at a time.
+//
+// Covering location
+// - Two fixed facilities are placed with a greedy maximal covering heuristic; the slider in the
+//   top right changes their covering radius. A third, mobile facility follows the pointer.
+//   Each demand point is assigned to the closest facility that covers it.
+//
+// Purely decorative except the slider; with reduced motion a single frame is drawn.
 ---
 <canvas class="hero-canvas" aria-hidden="true"></canvas>
+<div class="hero-ctrl">
+  <ul class="hero-legend" aria-hidden="true">
+    <li><i class="lg-truck"></i>truck</li>
+    <li><i class="lg-drone"></i>drone</li>
+    <li><i class="lg-fac"></i>facility</li>
+  </ul>
+  <label class="hero-radius">
+    <span>covering radius</span>
+    <input type="range" min="50" max="220" step="1" value="120" aria-label="Covering radius of the facilities" />
+    <output>120 px</output>
+  </label>
+  <p class="hero-readout" aria-hidden="true">&nbsp;</p>
+</div>
 
 <script>
   type P = { x: number; y: number };
   type Demand = P & { w: number };
-  type Sortie = { i: number; j: number; c: P; l1: number; l2: number };
+  type Sortie = {
+    i: number; j: number; c: P;
+    tLaunch: number; tServe: number; tLand: number; tTruck: number;
+  };
+  type Leg = { t0: number; t1: number; k: number; drive: boolean };
+
+  // ---- model parameters
+  const DRONE_SPEED = 0.85; // drone speed / truck speed (here the truck is faster)
+  const ENDURANCE = 0.42; // longest sortie (launch -> customer -> recovery), fraction of the width
+  const LOOP_SECONDS = 30; // roughly how long one tour lasts on screen
 
   const canvas = document.querySelector<HTMLCanvasElement>('.hero-canvas');
   const hero = canvas?.closest<HTMLElement>('.hero-x');
   const ctx = canvas?.getContext('2d');
+  const ctrl = hero?.querySelector<HTMLElement>('.hero-ctrl');
+  const slider = ctrl?.querySelector<HTMLInputElement>('input[type=range]');
+  const sliderOut = ctrl?.querySelector<HTMLOutputElement>('output');
+  const readout = ctrl?.querySelector<HTMLElement>('.hero-readout');
 
   if (canvas && hero && ctx) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -23,32 +61,69 @@
     const DRONE = '99,214,202'; // teal
     const FAC = '159,178,255'; // periwinkle
 
-    let W = 0, H = 0, dpr = 1;
+    let W = 0, H = 0, dpr = 1, wide = true;
     let map: HTMLCanvasElement | null = null;
     let demand: Demand[] = [];
     let tour: P[] = []; // tour[0] is the depot; the tour closes back on it
-    let cum: number[] = []; // arc length along the tour at each stop (cum[n] = total)
-    let total = 1;
     let sorties: Sortie[] = [];
-    const fac = { x: 0, y: 0, tx: 0, ty: 0, r: 120 };
+    let legs: Leg[] = [];
+    let arrival: number[] = []; // time the truck reaches each stop
+    let cum: number[] = []; // distance along the tour at each stop
+    let makespan = 1;
+    let fixed: P[] = [];
+    let radius = Number(slider?.value || 120);
+    const mob = { x: 0, y: 0, tx: 0, ty: 0 };
     let pointerActive = false;
     let running = false;
     let raf = 0;
+    let lastReadout = '';
     const t0 = performance.now();
 
     const dist = (a: P, b: P) => Math.hypot(a.x - b.x, a.y - b.y);
+    const lerp = (a: P, b: P, f: number): P => ({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f });
     const gauss = () => {
       const u = 1 - Math.random(), v = Math.random();
       return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     };
+    const segDist = (p: P, a: P, b: P) => {
+      const l2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2 || 1;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / l2));
+      return dist(p, lerp(a, b, t));
+    };
+    const insidePolygon = (p: P, poly: P[]) => {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i], b = poly[j];
+        if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+      }
+      return inside;
+    };
 
-    // Area kept free of route stops: the portrait on the right of the hero.
-    function photoBox() {
-      const img = hero!.querySelector<HTMLElement>('.hero-x-photo');
-      if (!img) return null;
-      const a = img.getBoundingClientRect(), h = hero!.getBoundingClientRect();
-      const cx = a.left - h.left + a.width / 2, cy = a.top - h.top + a.height / 2;
-      return { x: cx, y: cy, r: a.width / 2 + 34 };
+    // ---- areas kept free: the text column, the photo and the control panel
+    type Zone = { rect?: DOMRect; circle?: { x: number; y: number; r: number } };
+    let zones: Zone[] = [];
+    function measureZones() {
+      const h = hero!.getBoundingClientRect();
+      const rel = (r: DOMRect, pad: number) =>
+        new DOMRect(r.left - h.left - pad, r.top - h.top - pad, r.width + 2 * pad, r.height + 2 * pad);
+      zones = [];
+      const text = hero!.querySelector<HTMLElement>('.hero-x-text');
+      if (text && wide) zones.push({ rect: rel(text.getBoundingClientRect(), 26) });
+      const photo = hero!.querySelector<HTMLElement>('.hero-x-photo');
+      if (photo) {
+        const r = photo.getBoundingClientRect();
+        zones.push({ circle: { x: r.left - h.left + r.width / 2, y: r.top - h.top + r.height / 2, r: r.width / 2 + 30 } });
+      }
+      if (ctrl && wide) zones.push({ rect: rel(ctrl.getBoundingClientRect(), 14) });
+    }
+    function blocked(p: P, margin = 16) {
+      if (p.x < margin || p.y < margin || p.x > W - margin || p.y > H - margin) return true;
+      if (wide && p.y > H - 78) return true; // the key-numbers card overlaps the bottom of the hero
+      for (const z of zones) {
+        if (z.rect && p.x > z.rect.left && p.x < z.rect.right && p.y > z.rect.top && p.y < z.rect.bottom) return true;
+        if (z.circle && dist(p, z.circle) < z.circle.r) return true;
+      }
+      return false;
     }
 
     function buildMap() {
@@ -59,7 +134,6 @@
       g.scale(dpr, dpr);
       g.fillStyle = '#070b18';
       g.fillRect(0, 0, W, H);
-      // Street grid, slightly rotated, with irregular blocks.
       g.save();
       g.translate(W / 2, H / 2);
       g.rotate(-0.21);
@@ -73,7 +147,6 @@
         g.beginPath(); g.moveTo(-span / 2, y); g.lineTo(span / 2, y); g.stroke();
       }
       g.restore();
-      // A few arterial roads.
       g.strokeStyle = 'rgba(130,150,230,0.11)';
       g.lineWidth = 2;
       for (let i = 0; i < 5; i++) {
@@ -83,7 +156,6 @@
         g.bezierCurveTo(W * 0.3, y + (Math.random() - 0.5) * 260, W * 0.7, y + (Math.random() - 0.5) * 260, W + 20, y + (Math.random() - 0.5) * 120);
         g.stroke();
       }
-      // The coast: a darker sea in one corner.
       const sea = g.createRadialGradient(W * 0.08, H * 1.1, 0, W * 0.08, H * 1.1, Math.max(W, H) * 0.45);
       sea.addColorStop(0, 'rgba(40,70,160,0.16)');
       sea.addColorStop(1, 'rgba(40,70,160,0)');
@@ -93,9 +165,8 @@
 
     function buildDemand() {
       demand = [];
-      const target = Math.max(70, Math.min(320, Math.round((W * H) / 4200)));
-      // Demand concentrates around a few neighbourhood centres.
-      const centres = Array.from({ length: 6 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: 50 + Math.random() * 90 }));
+      const target = Math.max(70, Math.min(340, Math.round((W * H) / 4000)));
+      const centres = Array.from({ length: 7 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: 50 + Math.random() * 90 }));
       let guard = 0;
       while (demand.length < target && guard++ < target * 30) {
         let x: number, y: number;
@@ -113,26 +184,24 @@
       }
     }
 
-    function buildRoute() {
-      const wide = W > 800;
-      // On wide screens keep the route to the right of the text column.
-      const text = hero!.querySelector<HTMLElement>('.hero-x-text');
-      const textRight = text ? text.getBoundingClientRect().right - hero!.getBoundingClientRect().left : W * 0.5;
-      const box = wide
-        ? { x0: Math.min(W * 0.62, Math.max(W * 0.5, textRight - 30)), x1: W * 0.97, y0: H * 0.12, y1: H * 0.86 }
-        : { x0: W * 0.06, x1: W * 0.94, y0: H * 0.08, y1: H * 0.92 };
-      const photo = photoBox();
-      const n = wide ? 10 : 8;
-      const minD = Math.max(60, Math.min(110, Math.sqrt(((box.x1 - box.x0) * (box.y1 - box.y0)) / n) * 0.62));
-      const pts: P[] = [{ x: box.x1 - (box.x1 - box.x0) * 0.12, y: box.y1 - (box.y1 - box.y0) * 0.06 }];
+    // ---- truck tour across the whole hero
+    function buildTour() {
+      const n = wide ? Math.max(10, Math.min(16, Math.round(W / 100))) : 8;
+      const minD = wide ? Math.max(70, Math.min(110, W / 15)) : Math.max(55, W / 6);
+      const pts: P[] = [];
+      // Depot in the lower right part of the map.
+      for (let g = 0; g < 400 && !pts.length; g++) {
+        const p = { x: W * (0.7 + Math.random() * 0.25), y: H * (0.55 + Math.random() * 0.3) };
+        if (!blocked(p, 30)) pts.push(p);
+      }
+      if (!pts.length) pts.push({ x: W * 0.85, y: H * 0.7 });
       let guard = 0;
-      while (pts.length < n && guard++ < 4000) {
-        const p = { x: box.x0 + Math.random() * (box.x1 - box.x0), y: box.y0 + Math.random() * (box.y1 - box.y0) };
-        if (photo && dist(p, photo) < photo.r) continue;
+      while (pts.length < n && guard++ < 6000) {
+        const p = { x: W * (0.03 + Math.random() * 0.94), y: H * (0.08 + Math.random() * 0.86) };
+        if (blocked(p, 24)) continue;
         if (pts.some((q) => dist(p, q) < minD)) continue;
         pts.push(p);
       }
-      // Nearest-neighbour tour from the depot, then 2-opt.
       const left = pts.slice(1);
       tour = [pts[0]];
       while (left.length) {
@@ -156,27 +225,114 @@
       }
       cum = [0];
       for (let i = 1; i <= tour.length; i++) cum.push(cum[i - 1] + dist(tour[i - 1], tour[i % tour.length]));
-      total = cum[tour.length];
+    }
 
-      // Drone sorties: launch at stop i, serve a customer off the route, land at stop i + 2.
-      const centre = tour.reduce((s, p) => ({ x: s.x + p.x / tour.length, y: s.y + p.y / tour.length }), { x: 0, y: 0 });
+    // ---- drone sorties: customers outside the tour, rendezvous chosen to minimise waiting
+    function buildSorties() {
+      const n = tour.length;
+      const range = ENDURANCE * Math.max(W, 600);
+      const maxSorties = wide ? Math.max(3, Math.floor(n / 3)) : 2;
+      const placed: P[] = [];
       sorties = [];
-      for (const i of wide ? [1, 4, 7] : [1, 5]) {
-        const j = i + 2;
-        if (j > tour.length) continue;
-        const a = tour[i], b = tour[j % tour.length];
-        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-        let nx = -(b.y - a.y), ny = b.x - a.x;
-        const nl = Math.hypot(nx, ny) || 1;
-        nx /= nl; ny /= nl;
-        // Fly away from the route's centre, towards uncovered ground.
-        if (nx * (mid.x - centre.x) + ny * (mid.y - centre.y) < 0) { nx = -nx; ny = -ny; }
-        const off = 46 + Math.random() * 34;
-        const c = {
-          x: Math.min(W - 14, Math.max(14, mid.x + nx * off)),
-          y: Math.min(H - 14, Math.max(14, mid.y + ny * off)),
-        };
-        sorties.push({ i, j, c, l1: dist(a, c), l2: dist(c, b) });
+      let i = 1;
+      while (i < n - 1 && sorties.length < maxSorties) {
+        let best: { j: number; c: P; score: number } | null = null;
+        for (let j = i + 1; j <= Math.min(i + 3, n); j++) {
+          const a = tour[i], b = tour[j % n];
+          const truckLen = cum[j] - cum[i];
+          const mid = lerp(a, b, 0.5);
+          let nx = -(b.y - a.y), ny = b.x - a.x;
+          const nl = Math.hypot(nx, ny) || 1;
+          nx /= nl; ny /= nl;
+          for (const off of [55, 75, 95, 120, 150]) {
+            for (const sgn of [1, -1]) {
+              const c = { x: mid.x + nx * off * sgn, y: mid.y + ny * off * sgn };
+              if (blocked(c, 18) || insidePolygon(c, tour)) continue;
+              const clear = Math.min(...tour.map((q, k) => segDist(c, q, tour[(k + 1) % n])));
+              if (clear < 34) continue;
+              if (placed.some((q) => dist(q, c) < 50)) continue;
+              const fly = dist(a, c) + dist(c, b);
+              if (fly > range) continue;
+              // Waiting time at the rendezvous, in truck-distance units, plus a small push
+              // towards customers that sit clearly away from the route.
+              const score = Math.abs(fly / DRONE_SPEED - truckLen) - clear * 0.2;
+              if (!best || score < best.score) best = { j, c, score };
+            }
+          }
+        }
+        if (best) {
+          sorties.push({ i, j: best.j, c: best.c, tLaunch: 0, tServe: 0, tLand: 0, tTruck: 0 });
+          placed.push(best.c);
+          i = best.j + 1;
+        } else {
+          i++;
+        }
+      }
+    }
+
+    // ---- timetable: truck legs, waits at the rendezvous, drone flight times
+    function schedule() {
+      const n = tour.length;
+      const vT = Math.max(55, Math.min(115, cum[n] / LOOP_SECONDS));
+      const vD = vT * DRONE_SPEED;
+      const launchAt = new Map(sorties.map((s) => [s.i, s]));
+      const landAt = new Map(sorties.map((s) => [s.j, s]));
+      legs = [];
+      arrival = new Array(n + 1).fill(0);
+      let t = 0;
+      for (let k = 0; k <= n; k++) {
+        arrival[k] = t;
+        const land = k > 0 ? landAt.get(k) : undefined;
+        if (land) {
+          land.tTruck = t;
+          if (land.tLand > t) {
+            legs.push({ t0: t, t1: land.tLand, k, drive: false }); // the truck waits for the drone
+            t = land.tLand;
+          }
+        }
+        if (k === n) break;
+        const launch = launchAt.get(k);
+        if (launch) {
+          const a = tour[launch.i], b = tour[launch.j % n];
+          launch.tLaunch = t;
+          launch.tServe = t + dist(a, launch.c) / vD;
+          launch.tLand = launch.tServe + dist(launch.c, b) / vD;
+        }
+        const dt = dist(tour[k], tour[(k + 1) % n]) / vT;
+        legs.push({ t0: t, t1: t + dt, k, drive: true });
+        t += dt;
+      }
+      makespan = t + 1.5; // short pause at the depot before the next tour
+    }
+
+    // ---- fixed facilities: greedy maximal covering location
+    function placeFacilities() {
+      const count = wide ? 2 : 1;
+      const r = radius;
+      const covered = new Set<number>();
+      fixed = [];
+      // Keep the coverage areas off the text column and away from the photo, so they stay readable.
+      const clearOfZones = (d: P) =>
+        zones.every((z) => {
+          if (z.rect) {
+            const dx = Math.max(z.rect.left - d.x, 0, d.x - z.rect.right);
+            const dy = Math.max(z.rect.top - d.y, 0, d.y - z.rect.bottom);
+            return Math.hypot(dx, dy) > r * 0.6;
+          }
+          return z.circle ? dist(d, z.circle) > z.circle.r + r * 0.25 : true;
+        });
+      const sites = demand.filter((d) => !blocked(d, r * 0.4) && clearOfZones(d) && d.y < H - 78 - r * 0.3);
+      for (let f = 0; f < count; f++) {
+        let best: Demand | null = null, gain = -1;
+        for (const s of sites) {
+          if (fixed.some((q) => dist(q, s) < r * 1.4)) continue;
+          let g = 0;
+          demand.forEach((d, idx) => { if (!covered.has(idx) && dist(d, s) <= r) g += d.w; });
+          if (g > gain) { gain = g; best = s; }
+        }
+        if (!best) break;
+        fixed.push({ x: best.x, y: best.y });
+        demand.forEach((d, idx) => { if (dist(d, best!) <= r) covered.add(idx); });
       }
     }
 
@@ -184,26 +340,38 @@
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       W = hero!.clientWidth;
       H = hero!.clientHeight;
+      wide = W > 800;
       canvas!.width = W * dpr;
       canvas!.height = H * dpr;
-      fac.r = Math.max(80, Math.min(135, W * 0.095));
+      measureZones();
       buildMap();
       buildDemand();
-      buildRoute();
+      buildTour();
+      buildSorties();
+      schedule();
+      placeFacilities();
       if (!pointerActive) {
-        fac.x = fac.tx = W > 800 ? W * 0.62 : W * 0.5;
-        fac.y = fac.ty = H * 0.42;
+        mob.x = mob.tx = wide ? W * 0.58 : W * 0.5;
+        mob.y = mob.ty = H * 0.3;
       }
-      if (!running) draw(reduce ? total * 0.42 / 70 * 1000 + t0 : performance.now());
+      if (!running) draw(staticTime());
     }
+    const staticTime = () => t0 + (sorties[0] ? (sorties[0].tLaunch + sorties[0].tServe) / 2 : makespan * 0.4) * 1000;
 
-    // Position along the closed tour at arc length s.
-    function along(s: number): { p: P; ang: number } {
-      let k = 0;
-      while (k < tour.length - 1 && cum[k + 1] < s) k++;
-      const a = tour[k], b = tour[(k + 1) % tour.length];
-      const f = Math.min(1, Math.max(0, (s - cum[k]) / (cum[k + 1] - cum[k] || 1)));
-      return { p: { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f }, ang: Math.atan2(b.y - a.y, b.x - a.x) };
+    function truckAt(t: number) {
+      for (const L of legs) {
+        if (t >= L.t0 && t < L.t1) {
+          const n = tour.length;
+          const a = tour[L.k % n], b = tour[(L.k + 1) % n];
+          if (!L.drive) {
+            const prev = tour[(L.k - 1 + n) % n];
+            return { p: a, ang: Math.atan2(a.y - prev.y, a.x - prev.x), s: cum[L.k], waiting: true };
+          }
+          const f = (t - L.t0) / (L.t1 - L.t0);
+          return { p: lerp(a, b, f), ang: Math.atan2(b.y - a.y, b.x - a.x), s: cum[L.k] + f * (cum[L.k + 1] - cum[L.k]), waiting: false };
+        }
+      }
+      return { p: tour[0], ang: 0, s: cum[tour.length], waiting: false };
     }
 
     function pulse(c2: CanvasRenderingContext2D, p: P, prog: number, rgb: string) {
@@ -215,73 +383,116 @@
       c2.stroke();
     }
 
+    function drawDrone(c2: CanvasRenderingContext2D, p: P, spin: number, scale = 1) {
+      c2.save();
+      c2.translate(p.x, p.y);
+      c2.rotate(spin);
+      c2.scale(scale, scale);
+      c2.shadowColor = `rgba(${DRONE},0.9)`;
+      c2.shadowBlur = 10;
+      c2.strokeStyle = `rgb(${DRONE})`;
+      c2.lineWidth = 1.6;
+      c2.beginPath();
+      c2.moveTo(-5, -5); c2.lineTo(5, 5); c2.moveTo(5, -5); c2.lineTo(-5, 5);
+      c2.stroke();
+      c2.fillStyle = '#d9fffb';
+      for (const [dx, dy] of [[-5, -5], [5, 5], [5, -5], [-5, 5]]) {
+        c2.beginPath();
+        c2.arc(dx, dy, 2.3, 0, Math.PI * 2);
+        c2.fill();
+      }
+      c2.restore();
+    }
+
+    function facilityMarker(c2: CanvasRenderingContext2D, p: P, filled: boolean) {
+      c2.save();
+      c2.translate(p.x, p.y);
+      c2.rotate(Math.PI / 4);
+      c2.lineWidth = 1.6;
+      if (filled) {
+        c2.fillStyle = `rgb(${FAC})`;
+        c2.strokeStyle = '#ffffff';
+        c2.fillRect(-6, -6, 12, 12);
+        c2.strokeRect(-6, -6, 12, 12);
+      } else {
+        c2.fillStyle = '#070b18';
+        c2.strokeStyle = `rgb(${FAC})`;
+        c2.fillRect(-6, -6, 12, 12);
+        c2.strokeRect(-6, -6, 12, 12);
+      }
+      c2.restore();
+    }
+
     function draw(now: number) {
       const t = (now - t0) / 1000;
       const c2 = ctx!;
       c2.setTransform(dpr, 0, 0, dpr, 0, 0);
       if (map) c2.drawImage(map, 0, 0, W, H);
       if (tour.length < 3) return;
-
-      const speed = Math.max(55, Math.min(90, total / 26)); // px per second: one tour in ~26 s
-      const s = (t * speed) % total;
+      const T = t % makespan;
+      const n = tour.length;
 
       if (!reduce) {
         if (!pointerActive) {
-          const wide = W > 800;
-          fac.tx = (wide ? W * 0.66 : W * 0.5) + Math.cos(t * 0.17) * W * (wide ? 0.17 : 0.3);
-          fac.ty = H * 0.5 + Math.sin(t * 0.29) * H * (wide ? 0.3 : 0.36);
+          mob.tx = (wide ? W * 0.62 : W * 0.5) + Math.cos(t * 0.17) * W * (wide ? 0.3 : 0.3);
+          mob.ty = H * 0.45 + Math.sin(t * 0.29) * H * 0.32;
         }
-        fac.x += (fac.tx - fac.x) * 0.1;
-        fac.y += (fac.ty - fac.y) * 0.1;
+        mob.x += (mob.tx - mob.x) * 0.1;
+        mob.y += (mob.ty - mob.y) * 0.1;
       }
 
-      // ---- covering facility: demand within the radius is assigned to it
-      const r = fac.r;
-      const cov = c2.createRadialGradient(fac.x, fac.y, 0, fac.x, fac.y, r);
-      cov.addColorStop(0, `rgba(${FAC},0.13)`);
-      cov.addColorStop(1, `rgba(${FAC},0.03)`);
-      c2.fillStyle = cov;
-      c2.beginPath();
-      c2.arc(fac.x, fac.y, r, 0, Math.PI * 2);
-      c2.fill();
-
+      // ---- covering: fixed facilities + the mobile one; each point goes to the closest cover
+      const facs: { p: P; mobile: boolean }[] = fixed.map((p) => ({ p, mobile: false }));
+      facs.push({ p: { x: mob.x, y: mob.y }, mobile: true });
+      const r = radius;
+      for (const f of facs) {
+        const g = c2.createRadialGradient(f.p.x, f.p.y, 0, f.p.x, f.p.y, r);
+        g.addColorStop(0, `rgba(${FAC},${f.mobile ? 0.13 : 0.1})`);
+        g.addColorStop(1, `rgba(${FAC},0.03)`);
+        c2.fillStyle = g;
+        c2.beginPath();
+        c2.arc(f.p.x, f.p.y, r, 0, Math.PI * 2);
+        c2.fill();
+      }
+      const counts = new Array(facs.length).fill(0);
       let covered = 0;
       c2.lineWidth = 1;
-      c2.strokeStyle = `rgba(${FAC},0.22)`;
+      c2.strokeStyle = `rgba(${FAC},0.2)`;
       c2.beginPath();
+      const isCovered: boolean[] = [];
       for (const d of demand) {
-        if ((d.x - fac.x) ** 2 + (d.y - fac.y) ** 2 < r * r) {
+        let best = -1, bd = r;
+        facs.forEach((f, k) => {
+          const dd = dist(d, f.p);
+          if (dd <= bd) { bd = dd; best = k; }
+        });
+        isCovered.push(best >= 0);
+        if (best >= 0) {
           covered++;
-          c2.moveTo(fac.x, fac.y);
+          counts[best]++;
+          c2.moveTo(facs[best].p.x, facs[best].p.y);
           c2.lineTo(d.x, d.y);
         }
       }
       c2.stroke();
-      for (const d of demand) {
-        const inside = (d.x - fac.x) ** 2 + (d.y - fac.y) ** 2 < r * r;
+      demand.forEach((d, idx) => {
+        const inside = isCovered[idx];
         c2.fillStyle = inside ? 'rgba(214,224,255,0.95)' : 'rgba(170,185,235,0.32)';
         c2.beginPath();
         c2.arc(d.x, d.y, (inside ? 2.1 : 1.5) * d.w + 0.4, 0, Math.PI * 2);
         c2.fill();
+      });
+      for (const f of facs) {
+        c2.setLineDash(f.mobile ? [5, 5] : [2, 4]);
+        c2.lineDashOffset = f.mobile ? -t * 8 : 0;
+        c2.strokeStyle = `rgba(${FAC},${f.mobile ? 0.75 : 0.6})`;
+        c2.lineWidth = 1.3;
+        c2.beginPath();
+        c2.arc(f.p.x, f.p.y, r, 0, Math.PI * 2);
+        c2.stroke();
       }
-      c2.setLineDash([5, 5]);
-      c2.lineDashOffset = -t * 8;
-      c2.strokeStyle = `rgba(${FAC},0.75)`;
-      c2.lineWidth = 1.3;
-      c2.beginPath();
-      c2.arc(fac.x, fac.y, r, 0, Math.PI * 2);
-      c2.stroke();
       c2.setLineDash([]);
-      // Facility marker (diamond).
-      c2.save();
-      c2.translate(fac.x, fac.y);
-      c2.rotate(Math.PI / 4);
-      c2.fillStyle = `rgb(${FAC})`;
-      c2.strokeStyle = '#ffffff';
-      c2.lineWidth = 1.5;
-      c2.fillRect(-6, -6, 12, 12);
-      c2.strokeRect(-6, -6, 12, 12);
-      c2.restore();
+      facs.forEach((f) => facilityMarker(c2, f.p, !f.mobile));
 
       // ---- truck tour: planned (dim) and already driven (bright)
       c2.lineJoin = 'round';
@@ -293,56 +504,54 @@
       c2.closePath();
       c2.stroke();
 
-      const here = along(s);
+      const truck = truckAt(T);
       c2.strokeStyle = `rgba(${TRUCK},0.9)`;
       c2.lineWidth = 2.2;
       c2.shadowColor = `rgba(${TRUCK},0.6)`;
       c2.shadowBlur = 8;
       c2.beginPath();
       c2.moveTo(tour[0].x, tour[0].y);
-      for (let k = 1; k <= tour.length && cum[k] <= s; k++) c2.lineTo(tour[k % tour.length].x, tour[k % tour.length].y);
-      c2.lineTo(here.p.x, here.p.y);
+      for (let k = 1; k <= n && cum[k] <= truck.s + 0.01; k++) c2.lineTo(tour[k % n].x, tour[k % n].y);
+      c2.lineTo(truck.p.x, truck.p.y);
       c2.stroke();
       c2.shadowBlur = 0;
 
-      // ---- drone sorties
-      let drone: P | null = null;
-      for (const so of sorties) {
-        const a = tour[so.i], b = tour[so.j % tour.length];
-        const sA = cum[so.i], sB = cum[so.j];
-        const f = (s - sA) / (sB - sA);
-        const active = f >= 0 && f <= 1;
+      // ---- drone sorties: launch at i, serve c, recovery at j
+      let drone: { p: P; hover: boolean } | null = null;
+      for (const s of sorties) {
+        const a = tour[s.i], b = tour[s.j % n];
+        const end = Math.max(s.tLand, s.tTruck);
+        const active = T >= s.tLaunch && T < end;
+        const done = T >= end;
         c2.setLineDash([4, 5]);
-        c2.strokeStyle = `rgba(${DRONE},${active ? 0.85 : f > 1 ? 0.5 : 0.3})`;
+        c2.strokeStyle = `rgba(${DRONE},${active ? 0.9 : done ? 0.5 : 0.3})`;
         c2.lineWidth = 1.4;
         c2.beginPath();
         c2.moveTo(a.x, a.y);
-        c2.lineTo(so.c.x, so.c.y);
+        c2.lineTo(s.c.x, s.c.y);
         c2.lineTo(b.x, b.y);
         c2.stroke();
         c2.setLineDash([]);
-        const fc = so.l1 / (so.l1 + so.l2);
-        const served = f >= fc;
+        const served = T >= s.tServe;
         c2.fillStyle = served ? `rgb(${DRONE})` : '#070b18';
         c2.strokeStyle = `rgb(${DRONE})`;
         c2.lineWidth = 1.5;
         c2.beginPath();
-        c2.arc(so.c.x, so.c.y, 4.5, 0, Math.PI * 2);
+        c2.arc(s.c.x, s.c.y, 4.5, 0, Math.PI * 2);
         c2.fill();
         c2.stroke();
-        pulse(c2, so.c, ((f - fc) * (sB - sA)) / (speed * 0.9), DRONE);
+        pulse(c2, s.c, (T - s.tServe) / 0.9, DRONE);
         if (active) {
-          const d = f * (so.l1 + so.l2);
-          drone = d < so.l1
-            ? { x: a.x + ((so.c.x - a.x) * d) / so.l1, y: a.y + ((so.c.y - a.y) * d) / so.l1 }
-            : { x: so.c.x + ((b.x - so.c.x) * (d - so.l1)) / so.l2, y: so.c.y + ((b.y - so.c.y) * (d - so.l1)) / so.l2 };
+          if (T < s.tServe) drone = { p: lerp(a, s.c, (T - s.tLaunch) / (s.tServe - s.tLaunch)), hover: false };
+          else if (T < s.tLand) drone = { p: lerp(s.c, b, (T - s.tServe) / (s.tLand - s.tServe)), hover: false };
+          else drone = { p: { x: b.x + Math.cos(t * 4) * 9, y: b.y + Math.sin(t * 4) * 9 }, hover: true }; // waits for the truck
         }
       }
 
       // ---- truck customers and depot
-      for (let k = 1; k < tour.length; k++) {
+      for (let k = 1; k < n; k++) {
         const p = tour[k];
-        const served = s >= cum[k];
+        const served = T >= arrival[k];
         c2.fillStyle = served ? `rgb(${TRUCK})` : '#070b18';
         c2.strokeStyle = `rgb(${TRUCK})`;
         c2.lineWidth = 1.5;
@@ -350,7 +559,7 @@
         c2.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
         c2.fill();
         c2.stroke();
-        pulse(c2, p, (s - cum[k]) / (speed * 0.9), TRUCK);
+        pulse(c2, p, (T - arrival[k]) / 0.9, TRUCK);
       }
       const dep = tour[0];
       c2.fillStyle = `rgb(${TRUCK})`;
@@ -360,9 +569,19 @@
       c2.strokeRect(dep.x - 7, dep.y - 7, 14, 14);
 
       // ---- vehicles
+      if (truck.waiting) {
+        c2.setLineDash([3, 4]);
+        c2.lineDashOffset = -t * 10;
+        c2.strokeStyle = `rgba(${TRUCK},0.9)`;
+        c2.lineWidth = 1.4;
+        c2.beginPath();
+        c2.arc(truck.p.x, truck.p.y, 15, 0, Math.PI * 2);
+        c2.stroke();
+        c2.setLineDash([]);
+      }
       c2.save();
-      c2.translate(here.p.x, here.p.y);
-      c2.rotate(here.ang);
+      c2.translate(truck.p.x, truck.p.y);
+      c2.rotate(truck.ang);
       c2.shadowColor = `rgba(${TRUCK},0.9)`;
       c2.shadowBlur = 12;
       c2.fillStyle = '#ffd2a6';
@@ -373,52 +592,33 @@
       c2.fillStyle = `rgb(${TRUCK})`;
       c2.fillRect(3, -4.5, 5, 9);
       c2.restore();
-
-      if (drone) {
-        c2.save();
-        c2.translate(drone.x, drone.y);
-        c2.rotate(t * 2);
-        c2.shadowColor = `rgba(${DRONE},0.9)`;
-        c2.shadowBlur = 10;
-        c2.strokeStyle = `rgb(${DRONE})`;
-        c2.lineWidth = 1.6;
-        c2.beginPath();
-        c2.moveTo(-5, -5); c2.lineTo(5, 5); c2.moveTo(5, -5); c2.lineTo(-5, 5);
-        c2.stroke();
-        c2.fillStyle = '#d9fffb';
-        for (const [dx, dy] of [[-5, -5], [5, 5], [5, -5], [-5, 5]]) {
-          c2.beginPath();
-          c2.arc(dx, dy, 2.3, 0, Math.PI * 2);
-          c2.fill();
-        }
-        c2.restore();
-      }
+      if (drone) drawDrone(c2, drone.p, t * 2);
+      else drawDrone(c2, { x: truck.p.x, y: truck.p.y - 11 }, 0, 0.6); // riding on the truck
 
       // ---- labels
-      if (W > 800) {
+      if (wide) {
         c2.font = '11px "IBM Plex Mono", monospace';
-        c2.fillStyle = 'rgba(255,255,255,0.72)';
         c2.textAlign = 'center';
-        c2.fillText(`facility · ${covered} demand points covered`, fac.x, fac.y + r + 20);
+        c2.fillStyle = 'rgba(255,255,255,0.72)';
+        const m = facs[facs.length - 1];
+        c2.fillText(`mobile facility · ${counts[facs.length - 1]} covered`, m.p.x, m.p.y + r + 18);
+        fixed.forEach((p, k) => c2.fillText(`F${k + 1} · ${counts[k]}`, p.x, p.y + 22));
         c2.fillStyle = `rgba(${TRUCK},0.85)`;
         c2.fillText('depot', dep.x, dep.y + 22);
-        // Legend, top right under the hint.
-        c2.textAlign = 'left';
-        const lx = W - 300, ly = 62;
-        c2.strokeStyle = `rgba(${TRUCK},0.9)`;
-        c2.lineWidth = 2;
-        c2.beginPath(); c2.moveTo(lx, ly - 4); c2.lineTo(lx + 18, ly - 4); c2.stroke();
-        c2.fillStyle = 'rgba(255,255,255,0.6)';
-        c2.fillText('truck', lx + 24, ly);
-        c2.setLineDash([4, 4]);
-        c2.strokeStyle = `rgba(${DRONE},0.95)`;
-        c2.beginPath(); c2.moveTo(lx + 80, ly - 4); c2.lineTo(lx + 98, ly - 4); c2.stroke();
-        c2.setLineDash([]);
-        c2.fillText('drone', lx + 104, ly);
-        c2.strokeStyle = `rgba(${FAC},0.9)`;
-        c2.lineWidth = 1.3;
-        c2.beginPath(); c2.arc(lx + 168, ly - 4, 6, 0, Math.PI * 2); c2.stroke();
-        c2.fillText('covering radius', lx + 180, ly);
+        if (truck.waiting) c2.fillText('waiting for the drone', truck.p.x, truck.p.y - 22);
+        if (drone?.hover) {
+          c2.fillStyle = `rgba(${DRONE},0.9)`;
+          c2.fillText('drone waits for the truck', drone.p.x, drone.p.y - 20);
+        }
+      }
+
+      // ---- read-out in the panel (only when it changes)
+      if (readout) {
+        const txt = `${covered} / ${demand.length} demand points covered (${Math.round((100 * covered) / Math.max(1, demand.length))}%)`;
+        if (txt !== lastReadout) {
+          readout.textContent = txt;
+          lastReadout = txt;
+        }
       }
     }
 
@@ -436,24 +636,29 @@
       cancelAnimationFrame(raf);
     }
 
+    slider?.addEventListener('input', () => {
+      radius = Number(slider.value);
+      if (sliderOut) sliderOut.textContent = `${radius} px`;
+      if (!running) draw(staticTime());
+    });
+
     hero.addEventListener('pointermove', (e) => {
       if (e.pointerType === 'touch') return;
+      if ((e.target as Element | null)?.closest?.('.hero-ctrl')) return; // using the slider
       const rect = hero.getBoundingClientRect();
-      fac.tx = e.clientX - rect.left;
-      fac.ty = e.clientY - rect.top;
+      mob.tx = e.clientX - rect.left;
+      mob.ty = e.clientY - rect.top;
       pointerActive = true;
       if (reduce) {
-        fac.x = fac.tx;
-        fac.y = fac.ty;
-        draw(t0 + (total * 0.42 * 1000) / 70);
+        mob.x = mob.tx;
+        mob.y = mob.ty;
+        draw(staticTime());
       }
     });
     hero.addEventListener('pointerleave', () => (pointerActive = false));
 
-    // Animate only while the hero is visible and the tab is in the foreground.
     new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop())).observe(hero);
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    // Fires once immediately, then on every size change.
     new ResizeObserver(() => resize()).observe(hero);
   }
 </script>
