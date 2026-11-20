@@ -5,6 +5,7 @@ import { profile, url } from '../lib/data';
 const l = profile.links;
 const items = [
   l.email && { href: `mailto:${l.email}`, label: 'Email', icon: 'email', primary: true },
+  l.university_page && { href: l.university_page, label: 'UniNA', icon: 'university' },
   l.cv_pdf && { href: url(l.cv_pdf), label: 'CV (PDF)', icon: 'cv' },
   l.scholar && { href: l.scholar, label: 'Google Scholar', icon: 'scholar' },
   l.scopus && { href: l.scopus, label: 'Scopus', icon: 'scopus' },

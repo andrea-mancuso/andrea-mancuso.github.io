@@ -49,9 +49,6 @@ import { profile } from '../lib/data';
   <section class="section" aria-labelledby="h-elsewhere">
     <div class="section-head"><h2 id="h-elsewhere">Elsewhere</h2></div>
     <QuickLinks />
-    {profile.links.university_page && (
-      <p style="margin-top:1rem"><a href={profile.links.university_page} rel="noopener">University teacher page (docenti.unina.it)</a></p>
-    )}
   </section>
 
   {(profile.languages?.length || profile.skills?.length) && (

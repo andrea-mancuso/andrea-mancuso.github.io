@@ -30,7 +30,7 @@ const stats = (profile.stats || [])
   }))
   .filter((st) => st.value !== '');
 
-const sameAs = [profile.links.orcid, profile.links.scholar, profile.links.scopus, profile.links.github, profile.links.linkedin, profile.links.dblp, profile.lab_url].filter(Boolean);
+const sameAs = [profile.links.orcid, profile.links.scholar, profile.links.scopus, profile.links.university_page, profile.links.github, profile.links.linkedin, profile.links.dblp, profile.lab_url].filter(Boolean);
 const jsonld = {
   '@context': 'https://schema.org',
   '@type': 'Person',
