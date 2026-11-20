@@ -403,6 +403,35 @@ main {
   color: var(--paper);
   opacity: 0.92;
 }
+/* One line when there is room; otherwise two balanced rows of equal pills. */
+.ql-wrap {
+  container: ql / inline-size;
+}
+@container ql (max-width: 42rem) {
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(var(--ql-cols, 3), minmax(0, 1fr));
+    max-width: 30rem;
+  }
+  .quick-links a {
+    width: 100%;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .quick-links .ql-long {
+    display: none;
+  }
+}
+@container ql (max-width: 21rem) {
+  .quick-links {
+    gap: 0.4rem;
+  }
+  .quick-links a {
+    padding: 0.42rem 0.45rem;
+    font-size: 0.76rem;
+    gap: 0.3rem;
+  }
+}
 
 /* ------------------------------------------------------------------ hero (truck-and-drone map) */
 main:has(> .hero-x) {
@@ -446,7 +475,7 @@ main:has(> .hero-x) {
   padding-bottom: clamp(4.5rem, 11vh, 7rem);
 }
 .hero-x-text {
-  max-width: 40rem;
+  max-width: 42.5rem;
   pointer-events: none;
 }
 .hero-x-text a,
