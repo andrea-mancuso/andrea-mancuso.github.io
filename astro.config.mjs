@@ -4,7 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 // SITE_URL / BASE_PATH are set by the GitHub Pages workflow.
 // With a repository named "<username>.github.io" the base path is "/".
-const site = process.env.SITE_URL || 'https://andrea-mancuso.github.io';
+// The site is served at the custom domain andreamancuso.eu (Settings → Pages → Custom domain).
+// GitHub reports the address as http:// until its certificate is issued; the site is always
+// served over HTTPS, so canonical links, sitemap and previews use https://.
+const site = (process.env.SITE_URL || 'https://andreamancuso.eu').replace(/^http:\/\/(?!localhost)/, 'https://');
 const base = process.env.BASE_PATH || '/';
 
 export default defineConfig({
