@@ -10,7 +10,7 @@ author_match:
   last: Mancuso
   first_initial: A
 
-role: Postdoctoral Researcher
+role: Researcher
 # Optional second role, shown next to the main one on the home page and on the Contact page.
 secondary_role: Adjunct Professor
 department: Department of Political Science
@@ -44,28 +44,24 @@ photo_alt: Portrait of Andrea Mancuso
 google_site_verification: ""
 
 # Short description used by search engines and social previews (max ~160 characters).
-seo_description: Andrea Mancuso, Operations Research postdoc at the University of Naples Federico II. Mixed-integer programming for logistics, healthcare and location.
+seo_description: Andrea Mancuso, Operations Research researcher and adjunct professor at the University of Naples Federico II. Optimisation for logistics, healthcare and location.
 
 bio_short: >-
-  Andrea Mancuso is a postdoctoral researcher at the Department of Political Science of the
-  University of Naples Federico II, where he also teaches Optimization and Decision Making
-  for Management. He builds mixed-integer programming models, branch-and-cut algorithms and
+  Andrea Mancuso is a researcher at the Department of Political Science of the University of
+  Naples Federico II, where he also teaches Optimization and Decision Making for Management as
+  an adjunct professor. He builds mixed-integer programming models, branch-and-cut algorithms and
   matheuristics for truck-and-drone delivery, healthcare operations and covering location
   problems, and combines them with machine learning.
 
 # Paragraphs of the long bio (one item = one paragraph). Plain text; *text* becomes italic.
 bio_long:
   - >-
-    Andrea Mancuso is a postdoctoral researcher at the Department of Political Science of the
-    University of Naples Federico II, within the PNRR MUR project *Insurtech – Ecoscoring* led
-    by Prof. Francesco Palumbo, and an adjunct professor teaching *Optimization and Decision
-    Making for Management* in the MSc in Statistics for Decision Sciences. He received his BSc
-    and his MSc (110/110 cum laude) in Management Engineering from Federico II, with a master's
-    thesis on optimisation models for blood supply chain management, and in 2024 his PhD in
-    Information and Communication Technology for Health, with the thesis *Optimizing Healthcare
-    Logistics: Innovative Models, Methods, and Applications for Location, Scheduling, and
-    Routing*, supervised by Prof. Claudio Sterle. From 2023 to 2024 he was a postdoctoral
-    researcher on the PRIN 2022 project *ACHILLES* on eco-sustainable last-mile logistics.
+    Andrea Mancuso is a researcher at the Department of Political Science of the University of
+    Naples Federico II, where he also teaches *Optimization and Decision Making for Management*
+    as an adjunct professor. He holds a PhD in Information and Communication Technology for
+    Health and an MSc in Management Engineering (110/110 cum laude) from Federico II. He took
+    part in the PRIN 2022 project *ACHILLES* on last-mile logistics and is now part of the PNRR
+    MUR project *Insurtech – Ecoscoring*.
   - >-
     His research is in Operations Research, centred on mixed-integer linear programming: new
     formulations, valid inequalities and branch-and-cut algorithms, matheuristics, and machine
@@ -75,7 +71,7 @@ bio_long:
     and real-time re-scheduling of operating rooms, the design of regional blood supply chains,
     and covering and facility location problems, including services for the 15-minute city.
   - >-
-    He works with the University of Cádiz, where he was a visiting postdoctoral researcher in
+    He works with the University of Cádiz, where he was a visiting researcher in
     2024 and an Erasmus+ visiting professor in 2026, and with the University of Sheffield. Since
     2024 he has coordinated [EUROYoung](https://euroyoung.eu/), the early-career forum of the Association of European
     Operational Research Societies (EURO), and [AIROYoung](https://airoyoung.airo.org/), the young researchers' section of the
@@ -103,7 +99,6 @@ stats:
     note: auto
   - value: "21"
     label: conference talks
-    note: 2021 – 2026
 
 # Career and education, shown at the bottom of the home page as a route, from the first stop
 # to today. No dates: only what you did, in order.
@@ -122,19 +117,19 @@ career:
   - kind: education
     what: PhD in Information and Communication Technology for Health
     where: University of Naples Federico II
-    detail: "Thesis: *Optimizing Healthcare Logistics: Innovative Models, Methods, and Applications for Location, Scheduling, and Routing*, supervised by Prof. C. Sterle"
+    detail: "Thesis: *Optimizing Healthcare Logistics: Innovative Models, Methods, and Applications for Location, Scheduling, and Routing*"
   - kind: position
-    what: Postdoctoral Researcher
+    what: Researcher
     where: University of Naples Federico II
-    detail: "PRIN 2022 project *ACHILLES* on eco-sustainable, technology-driven last-mile logistics (PI: Prof. C. Sterle)"
+    detail: PRIN 2022 project *ACHILLES* on eco-sustainable, technology-driven last-mile logistics
   - kind: visiting
-    what: Visiting Postdoctoral Researcher
+    what: Visiting Researcher
     where: University of Cádiz, Spain
   - kind: position
     current: true
-    what: Postdoctoral Researcher
+    what: Researcher
     where: Department of Political Science, University of Naples Federico II
-    detail: "PNRR MUR project *Insurtech – Ecoscoring* (PI: Prof. F. Palumbo)"
+    detail: PNRR MUR project *Insurtech – Ecoscoring*
   - kind: position
     current: true
     what: Adjunct Professor

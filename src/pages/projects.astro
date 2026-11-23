@@ -33,7 +33,7 @@ const groups = [
               {p.status && <span class={`status ${p.status}`}>{STATUS[p.status] || p.status}</span>}
             </header>
             <h3>{p.title}</h3>
-            <p class="mono muted" style="font-size:0.8rem">{p.period}</p>
+            {p.period && <p class="mono muted" style="font-size:0.8rem">{p.period}</p>}
             <p set:html={inlineMd(p.description)} />
             {p.papers && p.papers.length > 0 && (
               <p style="font-size:0.88rem">

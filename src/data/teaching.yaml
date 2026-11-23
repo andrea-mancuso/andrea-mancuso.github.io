@@ -7,7 +7,7 @@ courses:
   - name: Optimization and Decision Making for Management
     credits: 9 ECTS
     programme: MSc in Statistics for Decision Sciences, University of Naples Federico II
-    years: 2024/25 – present
+    years: Current
   - name: Visiting Professor, Erasmus+ Staff Mobility for Teaching
     credits: 35 hours
     programme: University of Cádiz, Spain (5 January – 6 March 2026)
@@ -20,20 +20,15 @@ courses:
 # Teaching assistance (all at the University of Naples Federico II).
 assistance:
   - name: Operations Research
-    programme: BSc in Management Engineering, course of Prof. C. Sterle
-    years: 2020/21 – 2024/25
+    programme: BSc in Management Engineering
   - name: Models and Algorithms of Optimization
-    programme: MSc in Automation Engineering, course of Prof. C. Sterle
-    years: 2020/21 – 2024/25
+    programme: MSc in Automation Engineering
   - name: Operations Research II
-    programme: MSc in Management Engineering, course of Prof. M. Boccia
-    years: 2020/21 – 2024/25
+    programme: MSc in Management Engineering
   - name: Mathematical Analysis I
-    programme: BSc in Computer, Automation, Biomedical and Electrical Engineering, courses of Prof. S. Toscano (2021/22) and Prof. T. Radice (2022/23)
-    years: 2021/22 – 2022/23
+    programme: BSc in Computer, Automation, Biomedical and Electrical Engineering
   - name: Geometry
-    programme: BSc in Computer Science, course of Prof. F. Cioffi
-    years: 2021/22
+    programme: BSc in Computer Science
 
 supervision:
   summary: >-

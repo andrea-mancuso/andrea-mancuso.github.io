@@ -2,7 +2,7 @@
 # Projects shown on /projects.
 #   status: active | released | completed | planned
 #   kind: free text shown as a label (Funded project, Collaboration, Mobility, ...)
-#   period: free text, e.g. "2024 – present"
+#   period: optional free text, e.g. "Jan – Mar 2026" (leave out to show no dates)
 #   links: list of {label, url}
 #   papers: optional BibTeX keys, listed as "Related papers"
 # ------------------------------------------------------------------
@@ -10,11 +10,10 @@
 - title: Insurtech – Ecoscoring
   kind: Funded project · PNRR MUR
   status: active
-  period: 2025 – present
   description: >-
-    *Leveraging Ecoscoring for Enhanced Insurance Processes and Products*, led by Prof.
-    Francesco Palumbo at the Department of Political Science, where I work as a postdoctoral
-    researcher. Related work: interpretable machine learning on vehicle-emission data, such as
+    *Leveraging Ecoscoring for Enhanced Insurance Processes and Products*, at the Department of
+    Political Science of the University of Naples Federico II, where I am part of the research
+    team. Related work: interpretable machine learning on vehicle-emission data, such as
     behavioural archetypes discovered from SHAP explanations.
   links: []
   papers: [iodicedenza2026shap]
@@ -22,7 +21,6 @@
 - title: Covering and location problems with Cádiz and Sheffield
   kind: International collaboration
   status: active
-  period: 2024 – present
   description: >-
     Joint research with Prof. A. M. Rodríguez-Chía and Prof. M. Baldomero-Naranjo
     (University of Cádiz) and Prof. F. Saldanha-da-Gama (University of Sheffield) on covering
@@ -33,10 +31,9 @@
 - title: ACHILLES – Eco-Sustainable Efficient Technology-Driven Last Mile Logistics
   kind: Funded project · PRIN 2022
   status: completed
-  period: 2023 – 2024
   description: >-
-    National research project led by Prof. Claudio Sterle on eco-sustainable, efficient and
-    technology-driven last-mile logistics, in which I worked as a postdoctoral researcher.
+    National research project on eco-sustainable, efficient and technology-driven last-mile
+    logistics, in which I took part as a researcher.
   links: []
   papers: [boccia2024tdtlp, boccia2024features]
 
