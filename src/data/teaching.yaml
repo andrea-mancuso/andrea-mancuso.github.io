@@ -7,7 +7,7 @@ courses:
   - name: Optimization and Decision Making for Management
     credits: 9 ECTS
     programme: MSc in Statistics for Decision Sciences, University of Naples Federico II
-    years: Current
+    years: 2024/25 – present
   - name: Visiting Professor, Erasmus+ Staff Mobility for Teaching
     credits: 35 hours
     programme: University of Cádiz, Spain (5 January – 6 March 2026)
@@ -21,14 +21,19 @@ courses:
 assistance:
   - name: Operations Research
     programme: BSc in Management Engineering
+    years: 2020/21 – 2024/25
   - name: Models and Algorithms of Optimization
     programme: MSc in Automation Engineering
+    years: 2020/21 – 2024/25
   - name: Operations Research II
     programme: MSc in Management Engineering
+    years: 2020/21 – 2024/25
   - name: Mathematical Analysis I
     programme: BSc in Computer, Automation, Biomedical and Electrical Engineering
+    years: 2021/22 – 2022/23
   - name: Geometry
     programme: BSc in Computer Science
+    years: 2021/22
 
 supervision:
   summary: >-
