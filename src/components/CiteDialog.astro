@@ -1,12 +1,15 @@
 <script>
-  // "Cite" dialogs on publication lists: open and close them, and copy a citation, the BibTeX
-  // or the DOI. Citations are copied with their italics (for Word or Google Docs) and as plain text.
+  // "Abstract" and "Cite" dialogs on publication lists: open and close them, and copy a citation,
+  // the BibTeX or the DOI. Citations are copied with their italics (for Word or Google Docs) and
+  // as plain text.
   document.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
 
     const opener = target.closest<HTMLElement>('[data-cite-open]');
     if (opener) {
       const dialog = document.getElementById(opener.dataset.citeOpen || '') as HTMLDialogElement | null;
+      // "Cite" inside the abstract window: close the abstract first, then open the citations.
+      opener.closest('dialog')?.close();
       dialog?.showModal();
       return;
     }

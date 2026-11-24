@@ -32,6 +32,7 @@
   journal  = {Computers \& Industrial Engineering},
   year     = {2026},
   url      = {https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6915661},
+  abstract = {This work addresses the Covering Tour Problem with Path Upgrades (CTP-PU), a routing problem where a tour must be designed to cover all nodes in a given graph, while selected arcs can be upgraded within a budget to extend coverage through shortest paths. The problem generalizes classical covering-tour variants introducing operational upgrades decisions, making it computationally challenging. To solve the CTP-PU, we propose a novel matheuristic approach that integrates data science and machine learning techniques with combinatorial optimization methods. First, node-level features are extracted to describe structural and operational properties. Then, a classifier predicts whether each node belongs to the tour or is covered. These predictions are used to fix variables in a reduced MILP model, which is solved iteratively to guarantee feasibility and improve the solution. Random Forest and Naive Bayes classifiers are trained on optimal solutions of small instances and tested on medium- and large-scale cases. Computational experiments on three different sets of instances with up to 101 nodes show that the proposed method achieves solution quality very close to the model, while drastically reducing the computation running time. The approach proves robust across different instance types and parameter settings, confirming its ability to generalize to new and larger instances.},
   pubtype  = {submitted},
   abbr     = {C\&IE}
 }
@@ -68,6 +69,7 @@
   year     = {2026},
   doi      = {10.1016/j.cor.2026.107479},
   pdf      = {https://www.sciencedirect.com/science/article/pii/S0305054826000973/pdfft},
+  abstract = {This work introduces the Covering Tour Problem with Path Upgrades (CTP-PU) where for a given graph and a cost associated with each arc, the objective is to find a minimum-cost tour that ensures coverage of all non-tour nodes. Unlike the classical Covering Tour Problem, the CTP-PU enables the upgrading of arcs within a budget. These upgraded arcs can be shared by multiple paths from non-tour nodes to the tour. As a result, more than one of these nodes can benefit from each upgrade, thereby extending coverage to previously unreachable nodes. This approach provides a more practical and cost-effective solution, particularly beneficial in scenarios like humanitarian aid and medical supply distribution where optimizing shared infrastructure enhances overall efficiency. To address the CTP-PU, we propose several Mixed-Integer Linear Programming formulations based on a different rationale for preventing subtours. We also introduce different families of valid inequalities to tighten these formulations and improve computational efficiency. In the case of formulations with an exponential number of constraints, we develop alternative variants of a Branch-and-Cut (B&C) procedure specifically designed for this type of problem. We perform extensive computational experiments using benchmark instances from the literature to evaluate the effectiveness of the proposed method. Our results demonstrate their efficiency and highlight the significant impact of the valid inequalities and B&C procedure on solution quality and computational time.},
   pubtype  = {journal},
   abbr     = {COR},
   selected = {true}
@@ -82,6 +84,7 @@
   year     = {2026},
   doi      = {10.1007/s00500-025-10845-z},
   pdf      = {https://link.springer.com/content/pdf/10.1007/s00500-025-10845-z.pdf},
+  abstract = {Effective management of operating rooms (ORs) is a challenging yet crucial aspect of ensuring the proper functioning of hospitals. One of the critical issues in ORs management is developing an efficient surgery schedule. This challenge is known in scientific literature as part of the broader Integrated Operating Room Planning and Scheduling (IORPS). In its more general form, the IORPS involves making decisions about when and where surgeries should take place, considering various operational issues and constraints, such as resource utilization, patient priority, surgeon and equipment availability, and possible variations in conditions. This work addresses the specific IORPS faced by a hospital in Naples, aiming to balance two contrasting objectives throughout the planning horizon: maximizing OR utilization and accommodating unforeseeable events, such as variations in surgery durations and emergency arrivals. To address these challenges, we propose a two-phases optimization approach. Phase I focuses on designing an efficient and proactive surgery schedule that maximizes ORs utilization while ensuring an adequate responsiveness to unforeseeable events. Phase II reacts to these events, minimizing deviations from the schedule established in Phase I and remaining efficient and responsive throughout the planning horizon. Both phases are developed in an Integer Linear Programming fashion and integrated into an optimization tool. The effectiveness and performance of the proposed approach are validated using real data provided by the hospital. Experimental results demonstrate that our approach could be a valuable resource for supporting surgery department executives.},
   pubtype  = {journal},
   abbr     = {Soft Comput.},
   selected = {true}
@@ -96,6 +99,7 @@
   year     = {2024},
   doi      = {10.1007/s00500-024-09945-z},
   pdf      = {https://link.springer.com/content/pdf/10.1007/s00500-024-09945-z.pdf},
+  abstract = {This paper addresses a real-world Integrated Operating Room Planning and Scheduling (IORPS) problem encountered by a local hospital in Naples, characterized by stringent emergency management constraints, requiring treatment initiation within a 20-minute time-window. We tackle this problem by an original Integer Linear Programming formulation, capable of dealing with different operating room management strategies (open, block and block-modified). Our work differs from conventional cost-focused models by adopting a patient-oriented objective function, aligning with public hospitals obligations. The proposed method has been validated using real-world data provided by the hospital. The performed experimentation demonstrates the efficiency of the approach, capable of determining the optimal solution within an acceptable computation time that aligns with hospital requirements. Moreover, it also highlights the relevance of using our optimization approach to reduce delays in emergency responsiveness. This confirms its practical usage as a substitute for the current manual procedure.},
   pubtype  = {journal},
   abbr     = {Soft Comput.}
 }
@@ -109,6 +113,7 @@
   year     = {2024},
   doi      = {10.1016/j.trc.2024.104691},
   pdf      = {https://www.sciencedirect.com/science/article/pii/S0968090X24002122/pdfft},
+  abstract = {Truck-and-drone routing problems are a topic of increasing interest due to advancements in drone technology. Initially, drones were thought to serve only one customer per flight; however, recent improvements in drone technology have led to the definition of multi-visit truck-and-drone routing problems, where a drone can serve multiple customers in each flight. These routing problems, which require a careful synchronization between the truck and the drone, are challenging to solve, even with a small number of customers. In this work, we address a multi-visit, single-truck, single-drone routing problem also known in the literature as the Truck–Drone Team Logistics Problem (TDTLP). In particular, we study two versions of the TDTLP arising from the possibility for the drone to land or hover at the recollection points. Our study proposes a novel mixed-integer linear programming formulation for the TDTLP, solved by a Branch-and-Cut (B&C) algorithm. Then, we introduce a matheuristic approach that incorporates our B&C algorithm to solve medium- and large-size instances. Computational results on benchmark instances demonstrate the robustness and efficacy of the proposed methods.},
   pubtype  = {journal},
   abbr     = {TR-C},
   selected = {true}
@@ -123,6 +128,7 @@
   year     = {2024},
   doi      = {10.1016/j.trip.2024.101166},
   pdf      = {https://www.sciencedirect.com/science/article/pii/S2590198224001520/pdfft},
+  abstract = {This study illustrates a new freight transport incentive for achieving modal shift targets. The proposed incentives are jointly designed for all non-road modes within an optimization framework, varying by origin–destination pair to maximize effectiveness while adhering to budget constraints and market competition regulations. This approach addresses the limitations and side effects of existing incentive schemes. Methodological issues related to the formulation and solution of the optimization problem are discussed, and a specific heuristic algorithm is presented to apply the proposed approach to large-scale instances. The viability of the proposed approach is demonstrated with an example of a multimodal freight system in Italy, considering various assumptions on freight mode choice and cargo values of time. The results show that the proposed approach outperforms nationwide incentive schemes.},
   pubtype  = {journal},
   abbr     = {TRIP},
   nonalpha = {true}
@@ -137,6 +143,7 @@
   year     = {2024},
   doi      = {10.1016/j.tre.2024.103438},
   pdf      = {https://www.sciencedirect.com/science/article/pii/S1366554524000280/pdfft},
+  abstract = {Blood and blood products are crucial resources requiring effective management strategies and policies due to the potential severe consequences that could arise from their lack. Over the past two decades, the global healthcare community has recognized the significance of managing the Blood Supply Chain (BSC) efficiently and effectively. This includes policy-making, system design and organization. In this context, the Italian Healthcare Ministry issued a decree aimed at improving the BSC efficiency at regional level while reducing costs by providing several indications and restrictions to be accounted for. To address the need for improved BSC system management and design, we propose a mathematical modeling framework that builds upon and extends multi-echelon facility location and scenario-based mathematical models coming from literature, integrating soft constraints to achieve system aims with a multi-objective viewpoint. The proposed modeling framework has been implemented in two different perspectives: case-based and scenario-based. These two perspectives approaches are conceived to provide a comprehensive solution to the issue at hand, performing sensitivity analysis, and enabling the design of an efficient and effective BSC at the regional level, capable of handling inherent system uncertainty. To this aim, the proposed modeling framework comprises several objectives, including minimizing transportation costs, rationalizing the number and type of facilities, ensuring self-sufficiency, guaranteeing an average accessibility threshold, satisfying imposed restrictions and system constraints, and designing a system robust to varying exogenous and endogenous conditions. Real-world data sets were utilized to test and validate the proposed formulations. The obtained results demonstrate that they can be a valuable decision support tool for decision-makers, providing managerial insights and enabling the simulation of different system configurations.},
   pubtype  = {journal},
   abbr     = {TR-E},
   selected = {true}
@@ -151,6 +158,7 @@
   year     = {2024},
   doi      = {10.1016/j.eswa.2023.123106},
   pdf      = {https://www.sciencedirect.com/science/article/pii/S0957417423036102/pdfft},
+  abstract = {The increasing interest in the deployment of truck and drone delivery systems leads to the definition of new and complex vehicle routing problems. In this context, the flying sidekick traveling salesman problem (FS-TSP) is the first truck-and-drone routing problem defined in the literature. Several variants appeared in the last years differing in the operating conditions and the structure of the hybrid truck-and-drone delivery system. Exact and heuristic solution methods have been proposed in the literature to solve these problems effectively. However, the exact solution methods can generally solve only small-size instances due to the complexity of these problems. On the other hand, heuristic solution methods are able to find feasible solutions with an acceptable computational burden but without any guarantee of the quality of the solution. This work aims to investigate the possibility of using data science and machine learning techniques to reduce the complexity of solving an FS-TSP instance. The idea is to determine a good/optimal customer-to-vehicle assignment apriori to reduce the number of decisions involved in the FS-TSP solution. The assignment is determined through the classification of customers based on a subset of features specifically defined for the FS-TSP. This information can be exploited by existing solution approaches for the FS-TSP to improve their performance. An extensive computational campaign on benchmark instances is carried out with a twofold objective. On the one hand, we aim to evaluate the impact of the features on customer classification. On the other hand, we intend to show the relationship between classification and combinatorial optimization results by observing the effect of the customer classification on the FS-TSP solution.},
   pubtype  = {journal},
   abbr     = {ESWA}
 }
@@ -165,6 +173,7 @@
   year     = {2023},
   doi      = {10.1002/net.22172},
   pdf      = {https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/net.22172},
+  abstract = {Nowadays, truck‐and‐drone problems represent one of the most studied classes of vehicle routing problems. The Flying Sidekick Traveling Salesman Problem (FS‐TSP) is the first optimization problem defined in this class. Since its definition, several variants have been proposed differing for the side constraints related to the operating conditions and for the structure of the hybrid truck‐and‐drone delivery system. However, regardless the specific problem under investigation, determining the optimal solution of most of these routing problems is a very challenging task, due to the vehicle synchronization issue. On this basis, this work provides a new arc‐based integer linear programming formulation for the FS‐TSP. The solution of such formulation required the development of a branch‐and‐cut solution approach based on new families of valid inequalities and variable fixing strategies. We tested the proposed approach on different sets of benchmark instances. The experimentation shows that the proposed method is competitive or outperforms the state‐of‐the‐art approaches, providing either the optimal solution or improved bounds for several instances unsolved before.},
   pubtype  = {journal},
   abbr     = {Networks},
   award    = {Top 10 most-cited of 2023},
@@ -183,6 +192,7 @@
   year      = {2025},
   doi       = {10.1016/j.ifacol.2025.09.531},
   pdf       = {https://www.sciencedirect.com/science/article/pii/S2405896325012947/pdfft},
+  abstract  = {Emerging technologies, such as autonomous truck platooning, can provide multiple benefits, including reduced energy consumption and pollution, as well as increased road capacity. In this work, we study the impact of a flexible truck platooning operation mode, where a truck can belong to more than one platoon, on the Local Container Drayage Problem (LCDP). To address this problem, we propose a new mathematical programming formulation. Subsequently, we conduct an extensive computational campaign, comparing the solutions of the LCDP with the traditional platooning mode to those obtained under the flexible operational mode, thereby evaluating the benefits of this novel approach.},
   pubtype   = {conference},
   abbr      = {IFAC}
 }
@@ -197,6 +207,7 @@
   year      = {2025},
   doi       = {10.1016/j.ifacol.2025.09.533},
   pdf       = {https://www.sciencedirect.com/science/article/pii/S2405896325012960/pdfft},
+  abstract  = {This work proposes a novel heuristic approach for the Flying Sidekick Traveling Salesman Problem, that represents the first truck-and-drone routing problem defined in the literature. This approach integrates data science and machine learning techniques with combinatorial optimization methods. The aim is to determine a good/optimal customer-to-vehicle assignment a priori, reducing the solution space of the truck-and-drone routing problem. An extensive computational campaign on benchmark instances has been conducted to evaluate the effectiveness of the proposed approach.},
   pubtype   = {conference},
   abbr      = {IFAC}
 }
@@ -211,6 +222,7 @@
   publisher = {Springer},
   year      = {2025},
   doi       = {10.1007/978-3-031-78241-1_13},
+  abstract  = {In this study, we introduce the Covering Tour Problem with Arc Upgrade (CTPAU), an extension of the Covering Tour Problem (CTP) that exploits the possibility of enhancing the network by upgrading arcs. The CTP is defined on a graph consisting of three sets of nodes: those requiring coverage, those eligible to provide coverage, and a subset of the latter which must be visited. The objective is to determine the minimum cost tour that complies with both visiting and covering requirements. We introduce a further aspect on the problem given by the possibility of arc upgrades. Such upgrades decrease the length of an arc, usually within specific limits, incurring a cost directly proportional to the degree of reduction. Thus, the CTPAU aims to determine the minimum cost tour that meets the CTP requirements and incorporates the possibility of upgrading arcs, satisfying a budget constraint. To address this problem, we developed a Mixed Integer Linear Programming formulation and conducted experiments on benchmark instances from TSPLIB to assess our approach.},
   pubtype   = {conference},
   abbr      = {LNCS}
 }
@@ -224,6 +236,7 @@
   year      = {2024},
   doi       = {10.1016/j.trpro.2024.02.047},
   pdf       = {https://www.sciencedirect.com/science/article/pii/S2352146524001005/pdfft},
+  abstract  = {Automated Guided Vehicles (AGVs) are self-driving vehicles used for transporting goods and materials throughout different areas, such as shipping and receiving areas, storage facilities, and workstations. The popularity of AGVs has grown rapidly due to their many benefits, including flexibility in processes, efficient use of space, product safety, and computer integration and control. The design and management of AGV-based systems present various tactical decisions, such as fleet sizing and flow path design, as well as operational decisions such as dispatching, routing, and scheduling. In this study, we focus on a scheduling problem faced by a manufacturing company that utilizes AGVs subject to battery constraints for the horizontal movement of materials. Unlike previous studies, we investigate a Multi-objective AGV scheduling problem where both the AGV fleet size and the makespan need to be minimized. Additionally, AGV charging time depends on battery depletion. To support the company decision-making system, we propose a Mixed Integer Linear Programming formulation and a genetic algorithm. We have tested and validated our proposed methods using real-world instances provided by a manufacturing company. The results show the efficacy and the scalability of the proposed solution methods.},
   pubtype   = {conference},
   abbr      = {TR Procedia}
 }
@@ -237,6 +250,7 @@
   publisher = {Springer},
   year      = {2024},
   doi       = {10.1007/978-3-031-47686-0_28},
+  abstract  = {Pancreatic cancer presents a significant challenge in detection and treatment, with a shallow five-year survival rate. The small size and variable shape of the pancreas make it challenging to identify the presence of cancer in its early stages. To address this problem, we propose a novel method for the semantic segmentation of the pancreas in Computer Tomography (CT) scans, utilizing Convolutional Neural Networks (CNNs). Our approach involves training an encoder-decoder neural network to segment precisely the pancreas in CT images. We conducted experiments on a publicly available dataset, achieving results comparable to state-of-the-art methods based on the average Dice score. Furthermore, we evaluated the impact of different backbone models, providing valuable insights for future optimization. Our findings demonstrate that our approach effectively segments the pancreas in CT scans, potentially improving early detection and treatment planning for pancreatic cancer. This success validates the necessity of developing computer-aided diagnosis tools based on deep learning methods for pancreatic cancer, which are essential to enhancing patient outcomes. In summary, our work provides a solid foundation for developing computer-aided diagnosis tools for pancreatic cancer. Using CNNs for semantic segmentation of the pancreas in CT scans is a promising approach that could significantly improve the early detection and treatment of this deadly disease.},
   pubtype   = {chapter},
   abbr      = {AIRO Springer},
   nonalpha  = {true}
@@ -251,6 +265,7 @@
   publisher = {Springer},
   year      = {2024},
   doi       = {10.1007/978-3-031-47686-0_25},
+  abstract  = {The teaching of mathematics in high school and university and its relationship with problem modelling and solving is at the centre of debate in many countries, with a rich scientific literature. The theme has to be viewed in a broader framework. The definition of educational chain is preliminary given, starting from the content of a discipline and covering teaching strategies, forms of learning, evaluation and assessment. On this basis the mathematical language and the role of mathematics is discussed. Then the experience of OPS4Math (Optimization and Problem Solving for Teaching of Mathematics), a training project developed at Federico II University of Naples and aimed at high school teachers, is described, including motivations and objectives, and implementation phases. Finally, the proposed teaching strategy is presented through a classical optimization problem.},
   pubtype   = {chapter},
   abbr      = {AIRO Springer},
   nonalpha  = {true}
@@ -265,6 +280,7 @@
   publisher = {Springer},
   year      = {2023},
   doi       = {10.1007/978-3-031-28863-0_24},
+  abstract  = {Surgery department with its operating rooms represents the financial backbone of modern hospitals accounting the main part of a hospital cost and revenue. Therefore, maximizing its efficiency is of vital importance since it can have important implications on cost saving and patient satisfaction. In this context, Operations Research methodologies can play a relevant role supporting hospital executives in operating room management and surgery scheduling issues. In particular, great relevance has been given in literature to the Surgery Scheduling Problem (SPP). In its general form, it consists in determining a day, an operating room and a starting time of a set of surgeries. In this work, we address the SPP faced by a local hospital of Naples. The aim of the hospital is to determine a surgery schedule capable of handling unforeseeable events while maximizing the number of performed surgeries, according to some medical guidelines. This problem has been modelled by an original integer linear programming formulation that has been tested and validated on several instances derived from real data provided by the hospital. Finally, the proposed formulation can be used to simulate different surgery operating scenarios. The results of this simulation can be used to provide useful managerial insights for an efficient schedule of the hospital surgeries.},
   pubtype   = {chapter},
   abbr      = {AIRO Springer}
 }
@@ -278,6 +294,7 @@
   publisher = {Springer},
   year      = {2021},
   doi       = {10.1007/978-3-030-86841-3_13},
+  abstract  = {The integration of new distribution technologies in the delivery systems, specifically drones, has been investigated by several companies to reduce the Last-Mile Logistics costs. In this context, different truck-and-drone delivery systems have been proposed in literature, where the truck operates as a mobile depot for the drones. In this work, we study a two-echelon truck-and-drone distribution system where the first-echelon is composed of the depot and truck parking places, whereas the second-echelon is composed of the parking places and the final customers that are served by a fleet of drones. The truck parking places can be considered as locations where the operator can deploy the fleet of drones and monitor their trips. Moreover, we propose a mixed integer linear programming formulation and a two-stage heuristic that exploits the underlying structure of the problem. The proposed approaches are tested and validate on set of instances up to 50 customers.},
   pubtype   = {chapter},
   abbr      = {AIRO Springer}
 }
@@ -292,6 +309,7 @@
   publisher = {Springer},
   year      = {2021},
   doi       = {10.1007/978-3-030-86433-0_9},
+  abstract  = {The integration of new distribution technologies in the delivery systems, specifically drones, has been investigated by several companies to reduce the last mile logistic costs. The most promising delivery system, in terms of emissions and completion time reduction, consists of a truck and a drone operating in tandem for the parcel delivery to the customers. This has led to the definition of new and complex routing problems that have received great attention by the operations research community. Several contributions have appeared in the last years providing ILP and MILP formulation for these kinds of problems. Nevertheless, due to complexity, their solutions is impracticable even on small instances. In particular, the synchronization and the coordination of the two vehicles represent critical issues. In this work, we investigate the possibility of using customer characterizing features which allow to determine a priori promising customer-to-vehicle assignments. This information can be used to perform several variable fixings in the FSTSP formulation, so reducing the size and the complexity of the instances to be solved. Thus, the final aim is to determine optimal or sub-optimal solutions using state-of-the-art solver on a reduced FSTSP. To this aim, we provide a computational study proving the quality of the chosen features and their effectiveness in the solution of new and literature instances.},
   pubtype   = {conference},
   abbr      = {MOTOR}
 }
@@ -305,6 +323,7 @@
   publisher = {Springer},
   year      = {2021},
   doi       = {10.1007/978-3-030-86286-2_5},
+  abstract  = {Blood is a vital resource for human being since its unavailability may cause deaths and complications for patients. For this reason, in the last 20 years great interest has been addressed worldwide to the blood supply chain management, in terms of efficient and effective policy making and system design. In answer to this raising need, the Italian Healthcare Ministry issued a decree aimed at improving the blood supply chain at regional level in terms of costs, accessibility and shortage, providing also several indications and restrictions to be accounted for. In this context, this chapter presents a mixed-integer linear programming formulation to determine the optimal location and the number of blood facilities at regional scale, with the aim of minimizing system costs meanwhile guaranteeing good standard service level requirements. The proposed formulation tackles the problem in a multi-echelon and multi-objective perspective. It has been solved by Gurobi 9.0.1 solver and validated on real like test cases related to Campania and Puglia regions. Finally, the impacts of the different parameters involved in the formulation are analyzed in order to provide managerial insights to decision makers and healthcare stakeholders.},
   pubtype   = {chapter},
   abbr      = {AIRO Springer}
 }
@@ -317,6 +336,8 @@
   school   = {University of Naples Federico II},
   year     = {2024},
   url      = {https://www.fedoa.unina.it/15620/},
+  pdf      = {https://www.fedoa.unina.it/15620/1/Mancuso_Andrea_36.pdf},
+  abstract = {This Ph.D. thesis explores the application of Information and Communication Technology (ICT) in healthcare logistics, assessing its potential to rationalize operations. At its core, this research primarily focuses on application of Operational Research methods to improve the efficiency and reliability of healthcare systems. \par Before assessing specific problem arising from real world, this study offers an overview of the existing work in the field. Specifically, it highlights the key contributions and the potential for optimization enabled by technological progress. \par Following this, the thesis progresses to its core scientific contribution, tackling a challenge identified within the context of Facility Location problems, specifically focusing on the strategic management of the Blood Supply Chain. This study introduces two modeling frameworks: a case-based and a scenario-based approach. Both are modeled using hard and soft constraints to represent real-world conditions that should be adhered to. The objective is to balance donor self-sufficiency with cost minimization in system management. The scenario-based formulation is presented in two variations: an average-case and a worst-case scenario, to address the sensitivity of the solution to perturbations in conditions. The effectiveness of this approach is confirmed by a broad experimentation on a real case study in the Italian regions of Campania, Puglia, and Lombardy. \par After exploring Facility Location, the thesis shifts its attention to surgery scheduling, addressing the challenges of Integrated Operating Room Planning and Scheduling faced by hospitals. It introduces a tool based on two Integer Linear Programs (ILPs) designed to optimize surgical schedules. The tool aims to balance the maximization of performed elective surgeries with the management of emergency operations. The first ILP aims to enhance room occupancy, considering the potential arrival of emergencies that must be promptly integrated into the schedule, thereby providing an initial plan for the surgical department. The second ILP operates in real time, re-optimizing the schedule whenever there is a deviation from the planned activities, such as surgeries lasting longer than expected or the arrival of an emergency case. This ensures efficiency and responsiveness throughout the entire planning horizon. The effectiveness of these models is further underscored by their application to real world data from a hospital in Naples. \par Additionally, the thesis investigates the field of drone logistics, focusing on potential application in healthcare delivery. It introduces an innovative Mixed-Integer Linear Programming model to address the Flying Sidekick Traveling Salesman Problem, employing a Branch and Cut approach. This method advances the field by representing the state of the art. This exploration not only provides a new methodology to the existing literature but also opens to further research in healthcare logistics, especially concerning the use of drones for efficient and timely delivery. \par In conclusion, this thesis covers a wide range of Operational Research applications in healthcare. It exploits issues ranging from strategic planning and policy development to practical and logistical enhancements, providing a perspective on the potential and solutions in healthcare logistics influenced by ICT advancements. Each part of the study addresses specific issues while collectively offering a unified view of improving efficiency and effectiveness in healthcare logistics.},
   pubtype  = {thesis},
   abbr     = {PhD thesis}
 }

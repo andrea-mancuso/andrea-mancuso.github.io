@@ -151,6 +151,8 @@ export interface Publication {
   links: Link[];
   bibtex: string;
   cite: Citation | null;
+  /** Paragraphs of the abstract (empty when the entry has none). */
+  abstract: string[];
 }
 
 // ---------------------------------------------------------------- loaders
@@ -249,6 +251,7 @@ function toPublication(e: ReturnType<typeof parseBibtex>[number]): Publication {
     links,
     bibtex: publicBibtex(e),
     cite: buildCitation(e),
+    abstract: f.abstract ? f.abstract.split(/\s*\\par\s*/).map((p) => cleanLatex(p)).filter(Boolean) : [],
   };
 }
 

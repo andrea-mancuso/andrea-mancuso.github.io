@@ -12,6 +12,10 @@ const searchText = [pub.title, pub.venue, pub.abbr, ...pub.authors.map((a) => a.
 const underReview = pub.type === 'submitted';
 const cite = showCite ? pub.cite : null;
 const citeId = `cite-${pub.key}`;
+const absId = `abstract-${pub.key}`;
+const hasAbstract = showCite && pub.abstract.length > 0;
+const article = pub.links.find((l) => l.label === 'Article');
+const pdf = pub.links.find((l) => l.label === 'PDF');
 const dataUri = (mime: string, text: string) => `data:${mime};charset=utf-8,${encodeURIComponent(text)}`;
 ---
 <li class="pub" id={pub.key} data-type={pub.type} data-year={pub.year} data-search={searchText}>
@@ -52,6 +56,11 @@ const dataUri = (mime: string, text: string) => `data:${mime};charset=utf-8,${en
       {pub.links.map((l) => (
         <a href={l.url} rel="noopener" aria-label={`${l.label}: ${pub.title}`}>{l.label}</a>
       ))}
+      {hasAbstract && (
+        <button type="button" class="pub-abs" data-cite-open={absId} aria-haspopup="dialog" aria-label={`Abstract: ${pub.title}`}>
+          Abstract
+        </button>
+      )}
       {cite && (
         <button type="button" class="pub-cite" data-cite-open={citeId} aria-haspopup="dialog" aria-label={`Cite: ${pub.title}`}>
           Cite
@@ -59,6 +68,35 @@ const dataUri = (mime: string, text: string) => `data:${mime};charset=utf-8,${en
       )}
     </div>
   </div>
+  {hasAbstract && (
+    <dialog class="cite-dialog abs-dialog" id={absId} aria-labelledby={`${absId}-h`}>
+      <div class="cite-inner">
+        <div class="cite-head">
+          <h2 id={`${absId}-h`}>Abstract</h2>
+          <button type="button" class="cite-close" data-cite-close aria-label="Close">&times;</button>
+        </div>
+        <p class="abs-title">{pub.title}</p>
+        <p class="abs-meta">
+          {pub.authors.map((a, i) => (
+            <>
+              {a.me ? <strong>{a.name}</strong> : a.name}
+              {i < pub.authors.length - 1 ? ', ' : ''}
+            </>
+          ))}
+          <br />
+          {underReview ? <em>{pub.note || pub.venue}</em> : <><em>{pub.venue}</em>, {pub.year}</>}
+        </p>
+        <div class="abs-text">
+          {pub.abstract.map((p) => <p>{p}</p>)}
+        </div>
+        <div class="abs-foot">
+          {article && <a class="btn-small" href={article.url} rel="noopener">Article</a>}
+          {pdf && <a class="btn-small" href={pdf.url} rel="noopener">PDF</a>}
+          {cite && <button type="button" class="btn-small" data-cite-open={citeId}>❝ Cite</button>}
+        </div>
+      </div>
+    </dialog>
+  )}
   {cite && (
     <dialog class="cite-dialog" id={citeId} aria-labelledby={`${citeId}-h`}>
       <div class="cite-inner">

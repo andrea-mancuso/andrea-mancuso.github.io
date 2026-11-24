@@ -38,7 +38,9 @@ Apri `publications.bib`, copia una voce esistente e modificala. Oltre ai campi B
 
 Il tuo nome viene messo in grassetto automaticamente. Questi campi extra vengono tolti dal BibTeX mostrato ai visitatori.
 
-Sotto ogni pubblicazione compaiono i pulsanti **Article** (pagina dell'editore, dal campo `doi`), **PDF** e **Cite**.
+Sotto ogni pubblicazione compaiono i pulsanti **Article** (pagina dell'editore, dal campo `doi`), **PDF**, **Abstract** e **Cite**.
+Abstract compare se la voce ha il campo `abstract = {...}` (su una riga; per andare a capo usa `\par`) e apre una finestra
+con titolo, autori e testo. L'abstract non compare nel BibTeX mostrato ai visitatori.
 Cite apre una finestra come quella di Google Scholar: citazione in MLA, APA, Chicago, Harvard e Vancouver,
 BibTeX, DOI e download in BibTeX e RIS (EndNote, Zotero, Mendeley). Tutto viene generato dai campi della voce
 (`src/lib/cite.ts`): basta che `author`, `title`, `journal`/`booktitle`, `volume`, `pages`, `year` e `doi` siano completi.

@@ -904,6 +904,7 @@ a.card:hover h3 {
 }
 .pub-links a,
 .pub-links .pub-cite,
+.pub-links .pub-abs,
 .btn-small {
   font-family: var(--font-mono);
   font-size: 0.76rem;
@@ -918,6 +919,7 @@ a.card:hover h3 {
 }
 .pub-links a:hover,
 .pub-links .pub-cite:hover,
+.pub-links .pub-abs:hover,
 .btn-small:hover {
   color: var(--accent);
   border-color: var(--accent);
@@ -928,6 +930,50 @@ a.card:hover h3 {
 }
 .pub-links .pub-cite::before {
   content: '❝ ';
+}
+
+/* "Abstract" window (same frame as the Cite window). */
+.abs-dialog .abs-title {
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0.35rem 0 0.4rem;
+}
+.abs-dialog .abs-meta {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule);
+}
+.abs-dialog .abs-meta strong {
+  color: var(--ink-2);
+}
+.abs-dialog .abs-text p {
+  font-size: 0.95rem;
+  line-height: 1.68;
+  color: var(--ink-2);
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+@media (max-width: 560px) {
+  .abs-dialog .abs-text p {
+    text-align: left;
+  }
+}
+.abs-dialog .abs-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--rule);
+}
+.abs-dialog .abs-foot button {
+  color: var(--accent);
 }
 
 /* "Cite" dialog: the citation in five styles, BibTeX, DOI and downloads (as in Google Scholar). */

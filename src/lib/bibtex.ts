@@ -115,12 +115,26 @@ export function splitAuthors(s: string = ''): { first: string; last: string }[] 
 }
 
 // BibTeX shown to visitors: the original entry without site-only fields.
+// Fields kept in publications.bib but left out of the BibTeX shown to visitors: the site-only
+// fields above and the abstract (shown in its own window, as in Google Scholar's BibTeX).
+const HIDDEN_FIELDS = [...SITE_FIELDS, 'abstract'];
+
 export function publicBibtex(entry: BibEntry): string {
-  const lines = entry.raw.split('\n');
-  const kept = lines.filter((line) => {
+  const kept: string[] = [];
+  let skipping = 0; // brace depth of a hidden field that spans several lines
+  for (const line of entry.raw.split('\n')) {
+    const depth = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+    if (skipping > 0) {
+      skipping += depth;
+      continue;
+    }
     const m = /^\s*([A-Za-z]+)\s*=/.exec(line);
-    return !(m && SITE_FIELDS.includes(m[1].toLowerCase()));
-  });
+    if (m && HIDDEN_FIELDS.includes(m[1].toLowerCase())) {
+      if (depth > 0) skipping = depth;
+      continue;
+    }
+    kept.push(line);
+  }
   // Make sure the last field does not end with a dangling comma.
   let out = kept.join('\n');
   out = out.replace(/,(\s*)\}\s*$/, '$1}');
