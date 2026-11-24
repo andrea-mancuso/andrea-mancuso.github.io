@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import QuickLinks from '../components/QuickLinks.astro';
 import NewsList from '../components/NewsList.astro';
 import PubItem from '../components/PubItem.astro';
-import CopyBibtex from '../components/CopyBibtex.astro';
+import CiteDialog from '../components/CiteDialog.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
 import { profile, research, news, publications, publishedPapers, metrics, url, inlineMd, photoExists, formatDate } from '../lib/data';
 
@@ -173,5 +173,5 @@ const jsonld = {
       </ol>
     </div>
   </section>
-  <CopyBibtex />
+  <CiteDialog />
 </Base>

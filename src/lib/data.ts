@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import { parseBibtex, cleanLatex, splitAuthors, publicBibtex } from './bibtex';
+import { buildCitation, type Citation } from './cite';
 import profileSrc from '../data/profile.yaml?raw';
 import researchSrc from '../data/research.yaml?raw';
 import projectsSrc from '../data/projects.yaml?raw';
@@ -149,6 +150,7 @@ export interface Publication {
   note: string;
   links: Link[];
   bibtex: string;
+  cite: Citation | null;
 }
 
 // ---------------------------------------------------------------- loaders
@@ -215,13 +217,15 @@ function toPublication(e: ReturnType<typeof parseBibtex>[number]): Publication {
     .filter(Boolean)
     .join(', ');
 
+  // Buttons under each paper: the article on the publisher's site (through its DOI), the PDF,
+  // then any other page. The "Cite" button is added by PubItem.astro.
   const links: Link[] = [];
   const arxiv = f.arxiv || (f.archiveprefix === 'arXiv' ? f.eprint : '');
-  if (f.pdf) links.push({ label: 'PDF', url: f.pdf });
+  if (f.doi) links.push({ label: 'Article', url: `https://doi.org/${f.doi}` });
+  if (f.pdf) links.push({ label: 'PDF', url: /^https?:/.test(f.pdf) ? f.pdf : url(f.pdf) });
   else if (arxiv) links.push({ label: 'PDF', url: `https://arxiv.org/pdf/${arxiv}` });
   if (arxiv) links.push({ label: 'arXiv', url: `https://arxiv.org/abs/${arxiv}` });
   if (f.code) links.push({ label: 'Code', url: f.code });
-  if (f.doi) links.push({ label: 'DOI', url: `https://doi.org/${f.doi}` });
   if (f.url) {
     const label = /ssrn\.com/.test(f.url) ? 'SSRN' : /fedoa\./.test(f.url) ? 'fedOA' : 'Web';
     links.push({ label, url: f.url });
@@ -244,6 +248,7 @@ function toPublication(e: ReturnType<typeof parseBibtex>[number]): Publication {
     note: cleanLatex(f.note || ''),
     links,
     bibtex: publicBibtex(e),
+    cite: buildCitation(e),
   };
 }
 

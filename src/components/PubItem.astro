@@ -3,13 +3,16 @@ import { PUB_TYPES, type Publication } from '../lib/data';
 
 interface Props {
   pub: Publication;
-  showBibtex?: boolean;
+  showCite?: boolean;
 }
-const { pub, showBibtex = true } = Astro.props;
+const { pub, showCite = true } = Astro.props;
 const typeLabel = PUB_TYPES[pub.type] || pub.type;
 const searchText = [pub.title, pub.venue, pub.abbr, ...pub.authors.map((a) => a.name)].join(' ').toLowerCase();
 // Papers under review show their status ("Under review (second round), ...") instead of the venue.
 const underReview = pub.type === 'submitted';
+const cite = showCite ? pub.cite : null;
+const citeId = `cite-${pub.key}`;
+const dataUri = (mime: string, text: string) => `data:${mime};charset=utf-8,${encodeURIComponent(text)}`;
 ---
 <li class="pub" id={pub.key} data-type={pub.type} data-year={pub.year} data-search={searchText}>
   <div class="pub-meta">
@@ -49,15 +52,50 @@ const underReview = pub.type === 'submitted';
       {pub.links.map((l) => (
         <a href={l.url} rel="noopener" aria-label={`${l.label}: ${pub.title}`}>{l.label}</a>
       ))}
-      {showBibtex && !underReview && (
-        <details>
-          <summary aria-label={`BibTeX: ${pub.title}`}>BibTeX</summary>
-          <div class="bibtex">
-            <button class="btn-small copy" type="button" data-copy>Copy</button>
-            <pre><code>{pub.bibtex}</code></pre>
-          </div>
-        </details>
+      {cite && (
+        <button type="button" class="pub-cite" data-cite-open={citeId} aria-haspopup="dialog" aria-label={`Cite: ${pub.title}`}>
+          Cite
+        </button>
       )}
     </div>
   </div>
+  {cite && (
+    <dialog class="cite-dialog" id={citeId} aria-labelledby={`${citeId}-h`}>
+      <div class="cite-inner">
+        <div class="cite-head">
+          <h2 id={`${citeId}-h`}>Cite</h2>
+          <button type="button" class="cite-close" data-cite-close aria-label="Close">&times;</button>
+        </div>
+        <p class="cite-paper">{pub.title}</p>
+        <div class="cite-styles">
+          {cite.styles.map((s) => (
+            <div class="cite-row" data-copy-box>
+              <span class="cite-name">{s.name}</span>
+              <div class="cite-text" data-copy-src data-copy-html set:html={s.html} />
+              <button type="button" class="btn-small" data-copy aria-label={`Copy ${s.name} citation`}>Copy</button>
+            </div>
+          ))}
+        </div>
+        <div class="cite-bib" data-copy-box>
+          <div class="cite-bib-head">
+            <span class="cite-name">BibTeX</span>
+            <button type="button" class="btn-small" data-copy aria-label="Copy BibTeX">Copy</button>
+          </div>
+          <pre data-copy-src><code>{pub.bibtex}</code></pre>
+        </div>
+        <div class="cite-foot">
+          {cite.doi && (
+            <span class="cite-doi" data-copy-box>
+              DOI <a href={`https://doi.org/${cite.doi}`} rel="noopener" data-copy-src>{cite.doi}</a>
+              <button type="button" class="btn-small" data-copy aria-label="Copy DOI">Copy</button>
+            </span>
+          )}
+          <span class="cite-downloads">
+            <a class="btn-small" href={dataUri('application/x-bibtex', pub.bibtex + '\n')} download={`${pub.key}.bib`}>BibTeX ↓</a>
+            <a class="btn-small" href={dataUri('application/x-research-info-systems', cite.ris)} download={`${pub.key}.ris`} title="For EndNote, Zotero, Mendeley">RIS ↓</a>
+          </span>
+        </div>
+      </div>
+    </dialog>
+  )}
 </li>

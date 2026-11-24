@@ -903,7 +903,7 @@ a.card:hover h3 {
   align-items: center;
 }
 .pub-links a,
-.pub-links summary,
+.pub-links .pub-cite,
 .btn-small {
   font-family: var(--font-mono);
   font-size: 0.76rem;
@@ -916,39 +916,161 @@ a.card:hover h3 {
   cursor: pointer;
   list-style: none;
 }
-.pub-links summary::-webkit-details-marker {
-  display: none;
-}
 .pub-links a:hover,
-.pub-links summary:hover,
+.pub-links .pub-cite:hover,
 .btn-small:hover {
   color: var(--accent);
   border-color: var(--accent);
 }
-.pub-links details {
-  display: contents;
+.pub-links .pub-cite {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--rule-strong));
 }
-.bibtex {
-  flex-basis: 100%;
-  position: relative;
-  margin-top: 0.4rem;
+.pub-links .pub-cite::before {
+  content: '❝ ';
 }
-.bibtex pre {
+
+/* "Cite" dialog: the citation in five styles, BibTeX, DOI and downloads (as in Google Scholar). */
+html:has(.cite-dialog[open]) {
+  overflow: hidden;
+}
+.cite-dialog {
+  padding: 0;
+  width: min(46rem, calc(100vw - 2rem));
+  max-height: min(88vh, 48rem);
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(7, 11, 24, 0.35);
+}
+.cite-dialog::backdrop {
+  background: rgba(7, 11, 24, 0.55);
+}
+.cite-inner {
+  padding: 1.1rem 1.3rem 1.25rem;
+}
+.cite-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Reset the year-heading style of the publication list, which the dialog sits inside. */
+.cite-dialog .cite-head h2 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 560;
+  color: var(--ink);
+  letter-spacing: -0.01em;
   margin: 0;
-  padding: 0.9rem 1rem;
+  padding: 0;
+  border: 0;
+}
+.cite-close {
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 1.7rem;
+  line-height: 1;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cite-close:hover {
+  color: var(--accent);
+}
+.cite-paper {
+  color: var(--ink-3);
+  font-size: 0.88rem;
+  margin: 0.15rem 0 0.9rem;
+}
+.cite-styles {
+  border-top: 1px solid var(--rule);
+}
+.cite-row {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) auto;
+  gap: 0.35rem 1rem;
+  align-items: start;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.cite-name {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  padding-top: 0.2rem;
+}
+.cite-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.cite-bib {
+  margin-top: 1rem;
+}
+.cite-bib-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.cite-bib pre {
+  margin: 0;
+  max-height: 13rem;
+  padding: 0.85rem 1rem;
   background: var(--surface-2);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   line-height: 1.5;
-  overflow-x: auto;
+  overflow: auto;
   white-space: pre;
 }
-.bibtex .copy {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: var(--surface);
+.cite-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin-top: 0.95rem;
+}
+.cite-doi {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+.cite-doi a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.cite-downloads {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+@media (max-width: 560px) {
+  .cite-inner {
+    padding: 0.95rem 1rem 1.1rem;
+  }
+  .cite-row {
+    grid-template-columns: 1fr auto;
+  }
+  .cite-row .cite-name {
+    grid-row: 1;
+  }
+  .cite-row .btn-small {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .cite-row .cite-text {
+    grid-column: 1 / -1;
+  }
 }
 @media (max-width: 640px) {
   .pub {

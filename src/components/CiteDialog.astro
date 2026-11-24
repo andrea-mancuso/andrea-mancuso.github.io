@@ -1,0 +1,49 @@
+<script>
+  // "Cite" dialogs on publication lists: open and close them, and copy a citation, the BibTeX
+  // or the DOI. Citations are copied with their italics (for Word or Google Docs) and as plain text.
+  document.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+
+    const opener = target.closest<HTMLElement>('[data-cite-open]');
+    if (opener) {
+      const dialog = document.getElementById(opener.dataset.citeOpen || '') as HTMLDialogElement | null;
+      dialog?.showModal();
+      return;
+    }
+
+    // Close with the × button or by clicking outside the box (the backdrop belongs to the dialog).
+    if (target.closest('[data-cite-close]') || (target instanceof HTMLDialogElement && target.classList.contains('cite-dialog'))) {
+      target.closest('dialog')?.close();
+      return;
+    }
+
+    const btn = target.closest<HTMLButtonElement>('[data-copy]');
+    if (!btn) return;
+    const src = btn.closest('[data-copy-box]')?.querySelector<HTMLElement>('[data-copy-src]');
+    if (!src) return;
+    const text = (src.textContent || '').trim();
+    const label = btn.textContent;
+    try {
+      if (src.hasAttribute('data-copy-html') && 'ClipboardItem' in window) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/plain': new Blob([text], { type: 'text/plain' }),
+            'text/html': new Blob([src.innerHTML], { type: 'text/html' }),
+          }),
+        ]);
+      } else {
+        await navigator.clipboard.writeText(text);
+      }
+      btn.textContent = 'Copied';
+    } catch {
+      // Clipboard not available: select the text so it can be copied by hand.
+      const range = document.createRange();
+      range.selectNodeContents(src);
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+      btn.textContent = 'Selected';
+    }
+    setTimeout(() => (btn.textContent = label), 1600);
+  });
+</script>

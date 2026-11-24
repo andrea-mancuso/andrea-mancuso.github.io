@@ -32,9 +32,16 @@ Apri `publications.bib`, copia una voce esistente e modificala. Oltre ai campi B
 - `selected = {true}` – compare tra le "Selected publications" in home
 - `award = {...}` – etichetta evidenziata sotto il paper (es. `Top 10 most-cited of 2023`)
 - `nonalpha = {true}` – autori non in ordine alfabetico: compare la † come nel CV
-- `pdf`, `code`, `arxiv`, `url` – link ai pulsanti PDF / Code / arXiv / Web (un link SSRN diventa il pulsante "SSRN")
+- `pdf`, `code`, `arxiv`, `url` – link ai pulsanti PDF / Code / arXiv / Web (un link SSRN diventa il pulsante "SSRN").
+  Per `pdf` usa il PDF gratuito dell'editore (articoli open access) oppure metti il file in `public/papers/`
+  e scrivi `papers/nome.pdf`: solo versioni che puoi condividere (es. accepted manuscript, se l'editore lo consente)
 
 Il tuo nome viene messo in grassetto automaticamente. Questi campi extra vengono tolti dal BibTeX mostrato ai visitatori.
+
+Sotto ogni pubblicazione compaiono i pulsanti **Article** (pagina dell'editore, dal campo `doi`), **PDF** e **Cite**.
+Cite apre una finestra come quella di Google Scholar: citazione in MLA, APA, Chicago, Harvard e Vancouver,
+BibTeX, DOI e download in BibTeX e RIS (EndNote, Zotero, Mendeley). Tutto viene generato dai campi della voce
+(`src/lib/cite.ts`): basta che `author`, `title`, `journal`/`booktitle`, `volume`, `pages`, `year` e `doi` siano completi.
 Quando un lavoro in revisione viene accettato, cambia `@unpublished` in `@article`, `pubtype` in `journal`
 e aggiungi `volume`, `pages`, `doi`.
 

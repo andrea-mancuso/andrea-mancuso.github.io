@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PubItem from '../components/PubItem.astro';
-import CopyBibtex from '../components/CopyBibtex.astro';
+import CiteDialog from '../components/CiteDialog.astro';
 import { quartileYear, publications, PUB_TYPES, profile } from '../lib/data';
 
 const years = [...new Set(publications.map((p) => p.year))].sort((a, b) => b - a);
@@ -48,7 +48,7 @@ const typeCounts = Object.keys(PUB_TYPES)
     </section>
   ))}
   <p id="pub-empty" class="muted" hidden>No publications match these filters.</p>
-  <CopyBibtex />
+  <CiteDialog />
 </Base>
 
 <script>
