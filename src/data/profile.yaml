@@ -43,6 +43,10 @@ photo_alt: Portrait of Andrea Mancuso
 # value of content="..." in <meta name="google-site-verification" content="...">. Leave "" if unused.
 google_site_verification: ""
 
+# Visit counter: Umami Cloud (cookie-free, EU region). The statistics are private to your account at
+# https://cloud.umami.is. Leave empty to switch the counter off.
+umami_website_id: d36bb25a-233b-4c24-9942-0e2e14d47697
+
 # Short description used by search engines and social previews (max ~160 characters).
 seo_description: Andrea Mancuso, Operations Research researcher and adjunct professor at the University of Naples Federico II. Optimisation for logistics, healthcare and location.
 

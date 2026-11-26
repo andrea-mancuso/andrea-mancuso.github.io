@@ -65,6 +65,7 @@ export interface Profile {
   languages?: string[];
   skills?: string[];
   google_site_verification?: string;
+  umami_website_id?: string;
   stats?: { value: string; label: string; note?: string }[];
   career: CareerStop[];
   links: Record<string, string>;

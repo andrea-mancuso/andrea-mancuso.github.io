@@ -169,3 +169,13 @@ src/
 public/        file copiati così come sono (favicon, og.png, foto)
 scripts/       aggiornamento dati da OpenAlex, generazione dell'anteprima social
 ```
+
+## Contatore di visite
+
+Il sito usa **Umami Cloud** (gratis, senza cookie, dati in UE). Le statistiche le vedi solo tu su
+https://cloud.umami.is (accesso con il tuo account Google). L'ID è `umami_website_id` in
+`src/data/profile.yaml`: lascialo vuoto per spegnere il contatore.
+
+Per non contare le tue visite apri una volta, su ogni browser e telefono che usi,
+https://andreamancuso.eu/no-track/ e premi "Don't count my visits here". La pagina non è linkata e
+non compare su Google.

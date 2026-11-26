@@ -1,0 +1,41 @@
+---
+// Private helper page (not linked, not in search engines): stop counting your own visits
+// in the visit counter on this browser. Open it once on each browser/phone you use.
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Visit counter" description="Visit counter settings for this browser." noindex>
+  <header class="page-head">
+    <p class="eyebrow">Visit counter</p>
+    <h1>Your own visits</h1>
+    <p id="nt-status">Checking this browser…</p>
+  </header>
+  <p style="display:flex;gap:0.6rem;flex-wrap:wrap">
+    <button type="button" class="btn-small" id="nt-off">Don't count my visits here</button>
+    <button type="button" class="btn-small" id="nt-on">Count them again</button>
+  </p>
+  <p class="muted" style="font-size:0.9rem;margin-top:1.6rem;max-width:40rem">
+    The setting is saved in this browser only: open this page once on every computer and phone you use.
+    Statistics: <a href="https://cloud.umami.is" rel="noopener">cloud.umami.is</a>.
+  </p>
+  <script is:inline>
+    (function () {
+      var status = document.getElementById('nt-status');
+      function show() {
+        var off = false;
+        try { off = localStorage.getItem('umami.disabled') === '1'; } catch (e) {}
+        status.textContent = off
+          ? 'Your visits from this browser are not counted.'
+          : 'Your visits from this browser are counted like everyone else’s.';
+      }
+      document.getElementById('nt-off').addEventListener('click', function () {
+        try { localStorage.setItem('umami.disabled', '1'); } catch (e) {}
+        show();
+      });
+      document.getElementById('nt-on').addEventListener('click', function () {
+        try { localStorage.removeItem('umami.disabled'); } catch (e) {}
+        show();
+      });
+      show();
+    })();
+  </script>
+</Base>

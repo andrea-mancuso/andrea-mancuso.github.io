@@ -14,8 +14,12 @@ interface Props {
   title?: string;
   description?: string;
   jsonld?: object;
+  /** Keep the page out of search engines (and out of the sitemap, see astro.config.mjs). */
+  noindex?: boolean;
 }
-const { title, description = profile.seo_description, jsonld } = Astro.props;
+const { title, description = profile.seo_description, jsonld, noindex = false } = Astro.props;
+// The visit counter only runs on the real site, not on previews or on the old github.io address.
+const siteHost = Astro.site ? new URL(Astro.site).hostname : '';
 const fullTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}, ${profile.university}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url('og.png'), Astro.site);
@@ -43,6 +47,17 @@ const year = new Date().getFullYear();
     <meta name="description" content={description} />
     <meta name="author" content={profile.name} />
     {profile.google_site_verification && <meta name="google-site-verification" content={profile.google_site_verification} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    {profile.umami_website_id && (
+      <script
+        is:inline
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id={profile.umami_website_id}
+        data-domains={siteHost}
+        data-do-not-track="true"
+      ></script>
+    )}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
     <link rel="sitemap" href={url('sitemap-index.xml')} />
@@ -124,6 +139,7 @@ const year = new Date().getFullYear();
         <p class="mono" style="font-size:0.8rem;margin:0">
           © {year} {profile.name}<br />
           <a href={url('feed.xml')}>News feed</a>
+          {profile.umami_website_id && <><br /><span class="muted">Anonymous visit counter, no cookies</span></>}
         </p>
       </div>
     </footer>

@@ -19,5 +19,5 @@ export default defineConfig({
   // otherwise ask for a stylesheet that no longer exists after a new deploy, and show the page
   // without styles.
   build: { inlineStylesheets: 'always' },
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/no-track/') })],
 });
